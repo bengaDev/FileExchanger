@@ -31,14 +31,16 @@ SOURCES += \
     data_manager.cpp \
     host.cpp \
     server.cpp \
-    client.cpp
+    client.cpp \
+    flowlayout.cpp
 
 HEADERS += \
         mainwindow.h \
     data_manager.h \
     host.h \
     server.h \
-    client.h
+    client.h \
+    flowlayout.h
 
 FORMS += \
         mainwindow.ui
