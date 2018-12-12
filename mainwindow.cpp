@@ -1,9 +1,11 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent) :
+#include <QVBoxLayout>
+MainWindow::MainWindow(QWidget *parent, Data_Manager* dM) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    dataManager(dM)
 {
     ui->setupUi(this);
 
@@ -18,6 +20,23 @@ MainWindow::MainWindow(QWidget *parent) :
     if(icon != nullptr){
         setWindowIcon(QIcon(":/Icon_IMG/shareIMG.png"));
     }
+
+    QRect rect(10, 20, 100, 100);
+    QPixmap pix = dataManager->localHost.getAvatar();
+
+    flowLayout_ScrollArea = new FlowLayout();
+
+
+    for(int i = 0; i<5; i++){
+        QLabel *tempLabel = new QLabel();
+        tempLabel->setPixmap(pix);
+        flowLayout_ScrollArea->addWidget(tempLabel);
+    }
+    //flowLayout_ScrollArea->addWidget(tempLabel);
+    ui->scrollArea->widget()->setLayout(flowLayout_ScrollArea);
+
+    //ui->label_imgList->setPixmap(pix.scaled(200, 200, Qt::KeepAspectRatio, Qt::SmoothTransformation).copy(rect));
+
 
 
 }

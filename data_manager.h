@@ -7,10 +7,9 @@ class Data_Manager
 {
 public:
     Data_Manager(std::string localHostName);
-
+    Host localHost;
 
 private:
-    Host localHost;
     std::list<Host> online_users; // le liste devono avere un lock?
     //std::list<Host> to_send;
     //std::string file_path;

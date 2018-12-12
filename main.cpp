@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "data_manager.h"
 #include <QApplication>
 #include <QSystemTrayIcon>
 #include <QMessageBox>
@@ -8,7 +9,10 @@ int main(int argc, char *argv[])
     Q_INIT_RESOURCE(systray);
 
     QApplication a(argc, argv);
-    MainWindow w;
+
+    Data_Manager localDataManager("localHostName");
+
+    MainWindow w(nullptr, &localDataManager);
 
     if (!QSystemTrayIcon::isSystemTrayAvailable()) {
         QMessageBox::critical(0, QObject::tr("Systray"),

@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>Icon_IMG/shareIMG.png</file>
+        <file>Icon_IMG/avatar_3.png</file>
     </qresource>
 </RCC>
