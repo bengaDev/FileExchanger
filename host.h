@@ -2,18 +2,28 @@
 #define HOST_H
 #include <string>
 #include <QPixmap>
+#include <QUuid>
 
 class Host
 {
 public:
-    Host(bool visible = true, std::string name = "none");
+    Host(bool visible = true, QString name = "none");
     bool isVisible();
     QPixmap getAvatar();
+    QString getName();
+    void createuniqueID();
+    QUuid getUniqueID();
+    bool operator==(Host h);
+
+    QUuid uniqueID; // TO PUT IN PRIVATE IN FINAL VERSION ----
 
 private:
     bool visible;
-    std::string name;
+    QString name;
     QPixmap* avatar;
+
+
+
     //address ip;
     //picture avatar;
 };
