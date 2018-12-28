@@ -3,16 +3,30 @@
 #include <list>
 #include <host.h>
 
-class Data_Manager
+class Data_Manager : public QObject
 {
+    Q_OBJECT
+
 public:
-    Data_Manager(std::string localHostName);
-    Host localHost;
+    Data_Manager(QString localHostName);
+    Host *localHost;
+    void addOnlineUser(Host newHost);
+    void deleteOnlineUser(Host newHost);
+    void DEBUG_clearOnlineUsers();
+    std::list<Host> getOnlineUsers();
+
+signals:
+    void isUpdated();
+
+public slots:
+    void addToSendUsers(QUuid uniqueID);
+    void deleteToSendUsers(QUuid uniqueID);
 
 private:
-    std::list<Host> online_users; // le liste devono avere un lock?
-    //std::list<Host> to_send;
+    std::list<Host> onlineUsers; // le liste devono avere un lock?
+    std::list<Host> toSend;
     //std::string file_path;
 };
+
 
 #endif // DATA_MANAGER_H

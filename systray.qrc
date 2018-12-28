@@ -2,5 +2,9 @@
     <qresource prefix="/">
         <file>Icon_IMG/shareIMG.png</file>
         <file>Icon_IMG/avatar_3.png</file>
+        <file>Icon_IMG/circle_hover2.png</file>
+        <file>Icon_IMG/circle_hover3.png</file>
+        <file>Icon_IMG/circle_hover4.png</file>
+        <file>Icon_IMG/avatar_2.png</file>
     </qresource>
 </RCC>

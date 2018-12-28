@@ -3,6 +3,7 @@
 
 #include "data_manager.h"
 #include "flowlayout.h"
+#include "containergui.h"
 
 #include <QMainWindow>
 #include <QCloseEvent>
@@ -11,6 +12,7 @@
 #include <QAction>
 #include <QIcon>
 #include <QLabel>
+#include <QPainter>
 
 
 namespace Ui {
@@ -30,9 +32,21 @@ public:
     explicit MainWindow(QWidget *parent = nullptr, Data_Manager* dM = nullptr);
     ~MainWindow();
 
+private slots:
+    void updateAvatarVisible();
+    void DEBUG_addToDataManager();
+    void DEBUG_clearDataManager();
+    void addUuidToSend_SLOT(QUuid);
+    void deleteUuidToSend_SLOT(QUuid);
+
 private:
     Ui::MainWindow *ui;
     void createTrayIcon();
+    QPixmap maskPixMap(QPixmap pm);
+    ContainerGUI* fromHost_to_Container(Host h);
+    QList<ContainerGUI*> *onlineUsersGUI;
+    QString avatarStyleSheet();
+
 
     Data_Manager* dataManager;
 

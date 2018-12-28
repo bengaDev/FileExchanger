@@ -32,7 +32,8 @@ SOURCES += \
     host.cpp \
     server.cpp \
     client.cpp \
-    flowlayout.cpp
+    flowlayout.cpp \
+    containergui.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -40,7 +41,8 @@ HEADERS += \
     host.h \
     server.h \
     client.h \
-    flowlayout.h
+    flowlayout.h \
+    containergui.h
 
 FORMS += \
         mainwindow.ui
