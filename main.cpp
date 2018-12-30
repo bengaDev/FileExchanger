@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "data_manager.h"
+#include "server.h"
 #include <QApplication>
 #include <QSystemTrayIcon>
 #include <QMessageBox>
@@ -11,6 +12,8 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
     Data_Manager localDataManager("localHostName");
+
+    Server myServer;
 
     MainWindow w(nullptr, &localDataManager);
 
