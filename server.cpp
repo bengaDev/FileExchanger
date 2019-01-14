@@ -5,54 +5,58 @@ Server::Server(QObject *parent) :
 {
     tcpServer = new QTcpServer(this);
 
-    connect(tcpServer, SIGNAL(newConnection()), this, SLOT(newConnection()));
+    connect(tcpServer, SIGNAL(newConnectionSLOT()), this, SLOT(newConnectionSLOT()));
 
     if(!tcpServer->listen(QHostAddress::Any, port)) //listen to any ip address and on port = port
     {
         //SERVER COULD NOT START
-        qDebug() << "Server could not start!";
+        qDebug() << "Server: could not start!";
     }
     else
     {
         //SERVER STARTED
-        qDebug() << "Server started!";
+        qDebug() << "Server: started!";
         //TODO: ADD THREAD THAT SENDS EACH 15sec a isOnline message
     }
 }
 
-void Server::newConnection() //action performed each timen a new connection arrives
+void Server::newConnectionSLOT() //action performed each timen a new connection arrives
 {
     QTcpSocket *socket = tcpServer->nextPendingConnection();
-    qDebug() << "New Connection arrived!";
+
+    this->count++;
+
+    char message[50];
+
+    qDebug() << "Server: new Connection arrived! n:" << this->count;
     //analyze the content of the message
-    /* 2 types of message:
-     *
-     * 1.
-     *  Hello message:
-     *      <IP>__[HEY/ZZZ]__
-     *
-     * 2.
-     *  File Transfer Request
-     *      <IP>__FileTransfer__
-     *
-     *
-     */
-    qDebug() << "Waiting for bytes to be written";
 
-    for(int i = 0; i<3; i++) {
-        socket->waitForReadyRead(5000);
+    qDebug() << "Server: waiting for bytes to be written";
 
-        qDebug() << socket->readBufferSize();
+    socket->waitForReadyRead(5000); //aspetto 5 secondi dopodichè vado avanti
 
-        qDebug() << socket->readAll();
+    //qDebug() << "Server: " << socket->read(message, 50);
 
-        socket->flush();
+    QString message_string = socket->readLine();
 
+    qDebug() << "Server: " << message_string << " tot length: " << message_string.length();
+
+    if(message_string.startsWith("IP:")){
+        message_string = message_string.remove(0, 3);
+        qDebug() << "Server: " << message_string << " -> is a valid ip! ";
+
+        socket->write(message+3, 12);
     }
+    else{
+        qDebug() << "Server: " << "Not a valid message!";
+    }
+
+    socket->flush();
 
     socket->write("ByeBye");
     socket->waitForBytesWritten(3000);
-    qDebug() << "Closing Socket!";
+
+    qDebug() << "Server: " << "Closing Socket!";
 
     socket->close();
 }
