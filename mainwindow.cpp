@@ -74,8 +74,8 @@ void MainWindow::updateAvatarVisible(){
     for(int i = 0; i < onlineUsersGUI->size(); i++){
         QWidget *lastItem = onlineUsersGUI->at(i);
 
-        flowLayout_ScrollArea->removeWidget(lastItem);
-        delete lastItem;
+        flowLayout_ScrollArea->removeWidget(lastItem); // removes widget from layout
+        delete lastItem; // removes widget from memory
     }
 
     // Empty the list of pointers to those widgets
