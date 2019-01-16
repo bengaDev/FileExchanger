@@ -96,8 +96,8 @@ void MainWindow::updateAvatarVisible(){
 }
 
 ContainerGUI* MainWindow::fromHost_to_Container(Host h){
-    QPixmap pix = h.getAvatar();
-    QPixmap maskedPixmap = maskPixMap(pix);
+
+    QPixmap maskedPixmap = h.getAvatar();
 
     ContainerGUI *container = new ContainerGUI(nullptr, maskedPixmap);
 
@@ -139,27 +139,6 @@ QString MainWindow::avatarStyleSheet(){
             "border: 5px solid blue;}";
 }
 
-QPixmap MainWindow::maskPixMap(QPixmap pm){
-    QPixmap scaledPixmap = pm.scaled(100, 100, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation).copy(0, 0, 100, 100);
-    QImage out_img(100, 100, QImage::Format_ARGB32);
-
-    out_img.fill(Qt::transparent);
-
-    QBrush brush(scaledPixmap);
-    QPainter painter(&out_img);
-    painter.setBrush(brush);
-    painter.setPen(Qt::NoPen);
-    painter.setRenderHint(QPainter::Antialiasing, true);
-
-    // Here if x and y of 'drawEllipse' are at 'n' and 'm', then width and height must be at
-    // (100 -2*n) and (100 - 2*m) respectively in order to have a centered circular image
-    painter.drawEllipse(3, 3, 94, 94);
-
-    painter.end();
-
-    QPixmap outPix = QPixmap::fromImage(out_img);
-    return outPix;
-}
 
 // ===========================================
 // Tray Icon and window methods

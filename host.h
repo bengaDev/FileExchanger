@@ -3,6 +3,8 @@
 #include <string>
 #include <QPixmap>
 #include <QUuid>
+#include <QBrush>
+#include <QPainter>
 
 class Host
 {
@@ -22,6 +24,7 @@ private:
     QString name;
     QPixmap* avatar;
 
+    QPixmap maskPixmap(QPixmap);
 
 
     //address ip;
