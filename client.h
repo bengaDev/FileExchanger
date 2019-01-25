@@ -5,6 +5,8 @@
 #include <QDebug>
 #include <QTcpSocket>
 #include <QTcpServer>
+#include <QUdpSocket>
+#include <QtConcurrent/QtConcurrent>
 #include <QThread>
 #include <data_manager.h>
 
@@ -15,12 +17,17 @@ public:
     explicit Client(Data_Manager *dm, QObject *parent = nullptr);
 
 public slots:
-    void hello();
+
 
 private:
     Data_Manager *dm = nullptr;
     uint refreshTime = 10;
     QTcpSocket *tcpSocket = nullptr;
+    QThread *broadcastThread;
+
+    static void hello(Data_Manager*);
+    //void (Client::*p)() = &Client::hello;
+    QTcpSocket *broadcastTcpSocket;
 
 };
 

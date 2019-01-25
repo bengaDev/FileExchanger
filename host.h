@@ -15,6 +15,7 @@ public:
     QString getName();
     void createuniqueID();
     QUuid getUniqueID();
+    QString getVisibilityStatus();
     bool operator==(Host h);
 
     QUuid uniqueID; // TO PUT IN PRIVATE IN FINAL VERSION ----

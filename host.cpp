@@ -33,6 +33,10 @@ QUuid Host::getUniqueID(){
     return this->uniqueID;
 }
 
+QString Host::getVisibilityStatus(){
+    return (visible==true) ? "VISIBLE" : "NOTVISIBLE";
+}
+
 QPixmap Host::maskPixmap(QPixmap pm){
     QPixmap scaledPixmap = pm.scaled(100, 100, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation).copy(0, 0, 100, 100);
     QImage out_img(100, 100, QImage::Format_ARGB32);

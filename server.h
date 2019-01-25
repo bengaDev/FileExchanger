@@ -7,6 +7,7 @@
 #include <QDebug>
 #include <QTcpServer>
 #include <QTcpSocket>
+#include <QUdpSocket>
 #include <QString>
 #include "data_manager.h"
 
@@ -34,9 +35,12 @@ signals:
     //void newConnecion(); already present in QTcpServer
 public slots:
     void newConnectionSLOT(); //to manage signal newConnection from QTcpServer
+    void readBroadcastDatagram();
 
 private:
     QTcpServer *tcpServer;
+    QUdpSocket *udpSocket;
+    QTcpSocket *tcpSocket;
     quint16 port = SERVER_PORT; //use this port or example
     Data_Manager *dm = nullptr;
     int count = 0;

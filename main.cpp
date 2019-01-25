@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
 
     Client myClient(&localDataManager);
 
-    QThread t1;
+    /*QThread t1;
 
     t1.setObjectName("Client Thread");
 
@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
     QObject::connect(&t1, SIGNAL(finished()), &a, SLOT(quit()));  //probably this close the application when client is closed
 
     myClient.moveToThread(&t1);
-    t1.start();  //Client starts
+    t1.start();  //Client starts*/
 
     //qDebug() << "Main Thread continue...";
 

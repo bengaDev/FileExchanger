@@ -12,6 +12,7 @@ public:
     Host *localHost;
     void addOnlineUser(Host newHost);
     void deleteOnlineUser(Host newHost);
+    bool isPresentInOnlineUsers(QUuid);
     void DEBUG_clearOnlineUsers();
     std::list<Host> getOnlineUsers();
 

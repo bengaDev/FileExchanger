@@ -23,6 +23,15 @@ std::list<Host> Data_Manager::getOnlineUsers(){
     return onlineUsers;
 }
 
+bool Data_Manager::isPresentInOnlineUsers(QUuid id){
+    for(std::list<Host>::iterator it = onlineUsers.begin(); it != onlineUsers.end(); it++){
+        if(it->getUniqueID() == id){
+            return true;
+        }
+    }
+    return false;
+}
+
 void Data_Manager::addToSendUsers(QUuid uniqueID){
     for(std::list<Host>::iterator it = onlineUsers.begin(); it != onlineUsers.end(); it++){
         if(it->getUniqueID() == uniqueID){

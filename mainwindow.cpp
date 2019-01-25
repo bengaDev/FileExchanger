@@ -22,11 +22,11 @@ MainWindow::MainWindow(QWidget *parent, Data_Manager* dM) :
         setWindowIcon(QIcon(":/Icon_IMG/shareIMG.png"));
     }
 
-    QPixmap pix = dataManager->localHost->getAvatar();
+    /*QPixmap pix = dataManager->localHost->getAvatar();
     QPixmap maskedPixMap = maskPixMap(pix);
-    flowLayout_ScrollArea = new FlowLayout();
+    ui->toolButton->setIcon(QIcon(maskedPixMap));*/
 
-    ui->toolButton->setIcon(QIcon(maskedPixMap));
+    flowLayout_ScrollArea = new FlowLayout();
 
     ui->BackBtn->setStyleSheet("QPushButton:hover{background-color: yellow}");
 
