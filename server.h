@@ -8,8 +8,10 @@
 #include <QTcpServer>
 #include <QTcpSocket>
 #include <QUdpSocket>
+#include <QtConcurrent/QtConcurrent>
 #include <QString>
 #include "data_manager.h"
+#include "fortuneserver.h"
 
 /*
  * MESSAGE FROM EXTERNAL HOST TO MY SERVER:
@@ -29,21 +31,28 @@ class Server : public QObject
 {
     Q_OBJECT
 public:
-    explicit Server(QObject *parent = nullptr);
+    explicit Server(Data_Manager *dm, QObject *parent = nullptr);
 
 signals:
     //void newConnecion(); already present in QTcpServer
 public slots:
     void newConnectionSLOT(); //to manage signal newConnection from QTcpServer
     void readBroadcastDatagram();
+    //void readTcpData();
 
 private:
     QTcpServer *tcpServer;
     QUdpSocket *udpSocket;
-    QTcpSocket *tcpSocket;
+    QTcpSocket *tcpSocket, *tcpSocketAvatar;
+    FortuneServer *fortuneServer;
     quint16 port = SERVER_PORT; //use this port or example
     Data_Manager *dm = nullptr;
     int count = 0;
+
+    static void readTcpData(qintptr);
+
+protected:
+    //void incomingConnection(qintptr socketDescriptor) override;
 };
 
 #endif // SERVER_H

@@ -2,7 +2,7 @@
 
 Data_Manager::Data_Manager(QString localHostName)
 {
-    bool visible = false;
+    bool visible = true;
     localHost = new Host(visible, localHostName);
     localHost->createuniqueID();
 }
@@ -49,6 +49,19 @@ void Data_Manager::deleteToSendUsers(QUuid uniqueID){
             return false;
         }
     });
+}
+
+void Data_Manager::addQueueNextOnlineUsers(Host h){
+    queueNextOnlineUsers.push_back(h);
+}
+
+void Data_Manager::setAvatarOfNextOnlineUser(QPixmap avatar, QUuid uniqueID){
+    for(std::list<Host>::iterator it = queueNextOnlineUsers.begin(); it != queueNextOnlineUsers.end(); it++){
+        if(it->getUniqueID() == uniqueID){
+            it->setAvatar(avatar);
+            addOnlineUser(*it);
+        }
+    }
 }
 
 void Data_Manager::DEBUG_clearOnlineUsers(){

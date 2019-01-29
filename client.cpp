@@ -18,38 +18,96 @@ Client::Client(Data_Manager *dm, QObject *parent) :
                 "and my visibility is: " << dm->localHost->isVisible();
     qDebug() << "Client: " << dm->localHost->getUniqueID();
 
+    udpSocket = new QUdpSocket(this);
+    tcpSocket = new QTcpSocket(this);
+
+    if(!udpSocket->bind(1516, QUdpSocket::ShareAddress)){
+        // UDP listener of server could not start
+        qDebug() << "Client: UDP listener could not start!";
+    } else {
+        // UDP listener started
+        qDebug() << "Client: UDP listener started!";
+    }
+
+    connect(udpSocket, SIGNAL(readyRead()), this, SLOT(on_UdpReceive()));
     //void (*p) () = this->hello();
     //void (Client::*helloFuncPointer) ();
     //helloFuncPointer = &Client::hello;
     //QThread::create(this->hello, dm);
     //broadcastThread = QThread::create(this->hello);
-    QtConcurrent::run(this->hello, dm);
+    //QtConcurrent::run(this->hello, dm);
+    QtConcurrent::run(this, &Client::hello);
+
 
 }
 
-void Client::hello(Data_Manager* dm){
+void Client::hello(){
     qDebug() << "Client: inizialization...";
     uint refreshTime = 10;
     QUdpSocket udpSocket;
 
-    while(true){
+    while(atomicLoopFlag == 1){
         QByteArray datagram = "HOST Basic Info:" + dm->localHost->getUniqueID().toByteArray()
                 + "_" + dm->localHost->getName().toUtf8() + "_" + dm->localHost->getVisibilityStatus().toUtf8();
-
-        qDebug() << "Client: Broadcasting basic info -- " << udpSocket.state();
+        qDebug() << "=======================================================\n";
+        qDebug() << "Client: Broadcasting basic info -- UDP";
         if(udpSocket.writeDatagram(datagram, QHostAddress::Broadcast, 1515) == -1){
-            qDebug() << "Client: Could not send broadcast datagram";
+            qDebug() << "Client: Could not send broadcast basic info -- UDP";
         } else {
-            qDebug() << "Client: Broadcast of basic info done -- " << udpSocket.state();
+            qDebug() << "Client: Broadcast of basic info done -- UDP" << udpSocket.state();
 
         }
-
-
-        //tcpSocket.close();
 
         QThread::sleep(refreshTime);
 
     }
+}
+
+void Client::on_UdpReceive(){
+    QByteArray datagram;
+    QHostAddress senderIP;
+    QString datagramString;
+
+    while (udpSocket->hasPendingDatagrams()) {
+        datagram.resize(int(udpSocket->pendingDatagramSize()));
+        udpSocket->readDatagram(datagram.data(), datagram.size(), &senderIP);
+
+        datagramString = QString(datagram);
+
+        if(datagram.startsWith("SERVER REQUEST more info")){
+            // I want to send avatar on separate thread
+            //sendAvatar(dm, senderIP);
+            qDebug() << "Client: received request for more info -- UDP";
+            QtConcurrent::run(this, &Client::sendAvatar, senderIP);
+        }
+    }
+
+
+}
+
+void Client::sendAvatar(QHostAddress senderIP){
+
+    QImage avatar(dm->localHost->getAvatar().toImage());
+    QByteArray pictureBin;
+    QBuffer buffer(&pictureBin);
+    avatar.save(&buffer, "PNG");
+
+    QTcpSocket tcpSocket;
+    tcpSocket.connectToHost(senderIP, 1515);
+
+    qDebug() << "Client: sending avatar (separate thread)-- TCP";
+
+    //tcpSocket.write("avatar");
+    tcpSocket.write("avatar of " + dm->localHost->getUniqueID().toByteArray() + "_" + pictureBin);
+    tcpSocket.waitForBytesWritten(5000);
+    //tcpSocket.flush();
+
+    //tcpSocket.close();
+
+}
+
+Client::~Client(){
+    atomicLoopFlag = 0;
 }
 
 // noreturn can be omitted, but is better for compiler optimization

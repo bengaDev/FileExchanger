@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 
     Data_Manager localDataManager("localHostName");
 
-    Server myServer; //THIS STARTS THE SERVER
+    Server myServer(&localDataManager); //THIS STARTS THE SERVER
 
     QThread::currentThread()->setObjectName("Main Thread");
 

@@ -30,7 +30,12 @@ void Host::createuniqueID(){
 }
 
 QUuid Host::getUniqueID(){
+
     return this->uniqueID;
+}
+
+void Host::setUniqueID(QUuid uniqueID){
+    this->uniqueID = uniqueID;
 }
 
 QString Host::getVisibilityStatus(){
@@ -57,6 +62,10 @@ QPixmap Host::maskPixmap(QPixmap pm){
 
     QPixmap outPix = QPixmap::fromImage(out_img);
     return outPix;
+}
+
+void Host::setAvatar(QPixmap avatar){
+    (*this->avatar) = avatar;
 }
 
 bool Host::operator==(Host h){

@@ -16,6 +16,8 @@ public:
     void createuniqueID();
     QUuid getUniqueID();
     QString getVisibilityStatus();
+    void setAvatar(QPixmap);
+    void setUniqueID(QUuid uniqueID);
     bool operator==(Host h);
 
     QUuid uniqueID; // TO PUT IN PRIVATE IN FINAL VERSION ----

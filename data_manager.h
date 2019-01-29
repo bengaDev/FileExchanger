@@ -13,6 +13,8 @@ public:
     void addOnlineUser(Host newHost);
     void deleteOnlineUser(Host newHost);
     bool isPresentInOnlineUsers(QUuid);
+    void addQueueNextOnlineUsers(Host);
+    void setAvatarOfNextOnlineUser(QPixmap, QUuid);
     void DEBUG_clearOnlineUsers();
     std::list<Host> getOnlineUsers();
 
@@ -26,6 +28,7 @@ public slots:
 private:
     std::list<Host> onlineUsers; // le liste devono avere un lock?
     std::list<Host> toSend;
+    std::list<Host> queueNextOnlineUsers;
     //std::string file_path;
 };
 

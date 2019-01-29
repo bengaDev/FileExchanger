@@ -34,7 +34,8 @@ SOURCES += \
     server.cpp \
     client.cpp \
     flowlayout.cpp \
-    containergui.cpp
+    containergui.cpp \
+    fortuneserver.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -43,7 +44,8 @@ HEADERS += \
     server.h \
     client.h \
     flowlayout.h \
-    containergui.h
+    containergui.h \
+    fortuneserver.h
 
 FORMS += \
         mainwindow.ui

@@ -15,19 +15,25 @@ class Client : public QObject
     Q_OBJECT
 public:
     explicit Client(Data_Manager *dm, QObject *parent = nullptr);
+    ~Client();
 
 public slots:
+    void on_UdpReceive();
 
 
 private:
     Data_Manager *dm = nullptr;
     uint refreshTime = 10;
-    QTcpSocket *tcpSocket = nullptr;
+    QTcpSocket *tcpSocket;
+    QUdpSocket *udpSocket;
     QThread *broadcastThread;
 
-    static void hello(Data_Manager*);
+    void hello();
+    void sendAvatar(QHostAddress);
     //void (Client::*p)() = &Client::hello;
     QTcpSocket *broadcastTcpSocket;
+
+    QAtomicInt atomicLoopFlag = 1;
 
 };
 
