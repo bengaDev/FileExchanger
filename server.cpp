@@ -67,13 +67,13 @@ void Server::readBroadcastDatagram(){
                 qDebug() << "Server: request for more info -- UDP";
                 Host h(true, name);
                 h.setUniqueID(uniqueID);
-                dm->addQueueNextOnlineUsers(h);
+                dm->addQueueNextOnlineUsers(h);  //queue without avatar
 
                 QByteArray moreInfoDatagram = "SERVER REQUEST more info";
-                QUdpSocket udpSocket_2;
+                //QUdpSocket udpSocket_2;
                 udpSocket->writeDatagram(moreInfoDatagram, senderIP, 1516);
                 udpSocket->waitForBytesWritten(5000);
-            }
+            }  //add else not visible....
 
         } else {
             qDebug() << "Server: " << "Not a valid message!";
@@ -86,7 +86,7 @@ void Server::newConnectionSLOT() //action performed each timen a new connection 
     //QTcpSocket *socket = tcpServer->nextPendingConnection();
     QByteArray sentData;
 
-    qintptr socketDescriptor = tcpServer->socketDescriptor();
+    qintptr socketDescriptor = tcpServer->nextPendingConnection()->socketDescriptor();
 
     QtConcurrent::run(this->readTcpData, socketDescriptor);
 

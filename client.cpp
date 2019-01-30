@@ -51,6 +51,7 @@ void Client::hello(){
                 + "_" + dm->localHost->getName().toUtf8() + "_" + dm->localHost->getVisibilityStatus().toUtf8();
         qDebug() << "=======================================================\n";
         qDebug() << "Client: Broadcasting basic info -- UDP";
+
         if(udpSocket.writeDatagram(datagram, QHostAddress::Broadcast, 1515) == -1){
             qDebug() << "Client: Could not send broadcast basic info -- UDP";
         } else {
@@ -96,9 +97,10 @@ void Client::sendAvatar(QHostAddress senderIP){
     tcpSocket.connectToHost(senderIP, 1515);
 
     qDebug() << "Client: sending avatar (separate thread)-- TCP";
+    qDebug() << "Avatar size: " << pictureBin.size();
 
     //tcpSocket.write("avatar");
-    tcpSocket.write("avatar of " + dm->localHost->getUniqueID().toByteArray() + "_" + pictureBin);
+    tcpSocket.write("avatar of " + dm->localHost->getUniqueID().toByteArray() );//+ "_" + pictureBin);
     tcpSocket.waitForBytesWritten(5000);
     //tcpSocket.flush();
 

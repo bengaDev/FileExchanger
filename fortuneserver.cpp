@@ -34,7 +34,8 @@ void FortuneServer::threadFunction(Data_Manager* dm, qintptr socketDescriptor){
 
     if(sentData.startsWith("avatar of ")){
         qDebug() << "Fortune Server: Avatar received (separate thread)";
-        tcpSocket.disconnectFromHost();
+        qDebug() << "Sent data size: " << sentData.size();
+        /*tcpSocket.disconnectFromHost();
 
         QStringList stringTokens;
         QString uniqueID;
@@ -56,7 +57,7 @@ void FortuneServer::threadFunction(Data_Manager* dm, qintptr socketDescriptor){
         QPixmap image;
         QImage image_2;
         image.loadFromData(buffer->buffer());
-        image_2.loadFromData(buffer->buffer());
+        image_2.loadFromData(buffer->buffer());*/
 
 
     }

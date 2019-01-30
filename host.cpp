@@ -39,7 +39,7 @@ void Host::setUniqueID(QUuid uniqueID){
 }
 
 QString Host::getVisibilityStatus(){
-    return (visible==true) ? "VISIBLE" : "NOTVISIBLE";
+    return (visible==true) ? "VISIBLE" : "NOTVISIBLE";  //ENUM
 }
 
 QPixmap Host::maskPixmap(QPixmap pm){
