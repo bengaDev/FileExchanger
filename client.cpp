@@ -88,8 +88,32 @@ void Client::on_UdpReceive(){
 
 void Client::sendAvatar(QHostAddress senderIP){
 
-    QImage avatar(dm->localHost->getAvatar().toImage());
-    QByteArray pictureBin;
+    //QImage avatar(dm->localHost->getAvatar().toImage());
+
+    QPixmap avatar(dm->localHost->getAvatar());
+    QTcpSocket tcpSocket;
+    tcpSocket.connectToHost(senderIP, 1515);
+
+    QByteArray buffer;
+
+    QDataStream out(&buffer, QIODevice::ReadWrite);
+
+    out << qint32(0); // This inserts in buffer an int (4 bytes), where later the size will be stored
+    out << "avatar of " + dm->localHost->getUniqueID().toByteArray();
+    out << avatar; // binary representation of the image
+
+    out.device()->seek(0);
+    out << buffer.size(); // Here size of int(0)+avatar is inserted in place of int(0)
+
+    qDebug() << "Client: sending avatar (separate thread)-- TCP";
+    qDebug() << "Avatar size: " << buffer.size();
+
+    if(tcpSocket.write(buffer) < buffer.size()){
+        qDebug("Transmission error in sending avatar");
+    }
+    tcpSocket.waitForBytesWritten(5000);
+
+    /*QByteArray pictureBin;
     QBuffer buffer(&pictureBin);
     avatar.save(&buffer, "PNG");
 
@@ -100,11 +124,9 @@ void Client::sendAvatar(QHostAddress senderIP){
     qDebug() << "Avatar size: " << pictureBin.size();
 
     //tcpSocket.write("avatar");
-    tcpSocket.write("avatar of " + dm->localHost->getUniqueID().toByteArray() );//+ "_" + pictureBin);
-    tcpSocket.waitForBytesWritten(5000);
-    //tcpSocket.flush();
+    tcpSocket.write("avatar of " + dm->localHost->getUniqueID().toByteArray() + "_" + pictureBin);
+    tcpSocket.waitForBytesWritten(5000);*/
 
-    //tcpSocket.close();
 
 }
 

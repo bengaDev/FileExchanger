@@ -52,16 +52,20 @@ void Data_Manager::deleteToSendUsers(QUuid uniqueID){
 }
 
 void Data_Manager::addQueueNextOnlineUsers(Host h){
+    mutex.lock();
     queueNextOnlineUsers.push_back(h);
+    mutex.unlock();
 }
 
 void Data_Manager::setAvatarOfNextOnlineUser(QPixmap avatar, QUuid uniqueID){
+    mutex.lock();
     for(std::list<Host>::iterator it = queueNextOnlineUsers.begin(); it != queueNextOnlineUsers.end(); it++){
         if(it->getUniqueID() == uniqueID){
             it->setAvatar(avatar);
             addOnlineUser(*it);
         }
     }
+    mutex.unlock();
 }
 
 void Data_Manager::DEBUG_clearOnlineUsers(){

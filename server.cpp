@@ -58,6 +58,7 @@ void Server::readBroadcastDatagram(){
 
             uniqueID.remove('{');
             uniqueID.remove('}');
+            qDebug() << "Sender IP: " << senderIP.toString() << " || My IP: " << QHostAddress(QHostAddress::LocalHost);
 
             // Now basic info is acquired. I need to check if the received datagram is from a visible
             // host and if it is not already present in the 'onlineUsers' list.

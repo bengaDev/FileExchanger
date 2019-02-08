@@ -2,6 +2,7 @@
 #define DATA_MANAGER_H
 #include <list>
 #include <host.h>
+#include <QMutex>
 
 class Data_Manager : public QObject
 {
@@ -29,6 +30,8 @@ private:
     std::list<Host> onlineUsers; // le liste devono avere un lock?
     std::list<Host> toSend;
     std::list<Host> queueNextOnlineUsers;
+
+    QMutex mutex;
     //std::string file_path;
 };
 
