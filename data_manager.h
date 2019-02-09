@@ -1,5 +1,9 @@
 #ifndef DATA_MANAGER_H
 #define DATA_MANAGER_H
+
+#define SERVER_PORT 2015
+#define BROADCAST_PORT 2016
+
 #include <list>
 #include <host.h>
 #include <QMutex>

@@ -9,7 +9,7 @@ Server::Server(Data_Manager *dm, QObject *parent) :
     udpSocket = new QUdpSocket(this);
     // 'ShareAddress' allows other services to bind to the same address and port
     // In order to have exclusive binding of port and address in this "service", use: 'DontShareAddress'
-    if(!udpSocket->bind(1515, QUdpSocket::ShareAddress)){
+    if(!udpSocket->bind(SERVER_PORT, QUdpSocket::ShareAddress)){
         // UDP listener of server could not start
         qDebug() << "Server: UDP listener could not start!";
     } else {
@@ -27,7 +27,7 @@ Server::Server(Data_Manager *dm, QObject *parent) :
     ///connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(readTcpData()));
 
     fortuneServer = new FortuneServer(dm);
-    if(!fortuneServer->listen(QHostAddress::Any, 1515) ){
+    if(!fortuneServer->listen(QHostAddress::Any, SERVER_PORT) ){
          qDebug() << "FortuneServer: could not start!";
     }
 }
@@ -39,6 +39,9 @@ void Server::readBroadcastDatagram(){
     QStringList datagramTokens;
 
     QString uniqueID, name, visibility;
+
+    qDebug() << "Server: readBroadcast datagram!";
+
 
     while (udpSocket->hasPendingDatagrams()) {
         datagram.resize(int(udpSocket->pendingDatagramSize()));

@@ -1,8 +1,6 @@
 #ifndef SERVER_H
 #define SERVER_H
 
-#define SERVER_PORT 1515
-
 #include <QObject>
 #include <QDebug>
 #include <QTcpServer>

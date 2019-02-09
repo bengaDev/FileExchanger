@@ -42,6 +42,7 @@ void FortuneServer::threadFunction(Data_Manager* dm, qintptr socketDescriptor){
     }
 
     while(tcpSocket.bytesAvailable() < msgSize - 4 ){
+        qDebug() << "Bytes Available (to be read) : " << tcpSocket.bytesAvailable();
         if(!tcpSocket.waitForReadyRead(5000)){
             tcpSocket.disconnectFromHost();
             break;
@@ -57,6 +58,8 @@ void FortuneServer::threadFunction(Data_Manager* dm, qintptr socketDescriptor){
         //tcpSocket.disconnectFromHost();
         in >> avatar;
 
+        qDebug() << "Received avatar size: " << avatar.size();
+
         QStringList stringTokens;
         QString uniqueID;
 
@@ -65,7 +68,7 @@ void FortuneServer::threadFunction(Data_Manager* dm, qintptr socketDescriptor){
         sentData.remove(36, 1); // for closed brace '}'
 
         QString data(sentData);
-        stringTokens = data.split('_');
+        stringTokens = data.split('_');  //can be removed
         uniqueID = stringTokens.at(0);
 
         sentData.remove(0, 37); // for QUuid delete

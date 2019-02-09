@@ -21,7 +21,7 @@ Client::Client(Data_Manager *dm, QObject *parent) :
     udpSocket = new QUdpSocket(this);
     tcpSocket = new QTcpSocket(this);
 
-    if(!udpSocket->bind(1516, QUdpSocket::ShareAddress)){
+    if(!udpSocket->bind(BROADCAST_PORT, QUdpSocket::ShareAddress)){
         // UDP listener of server could not start
         qDebug() << "Client: UDP listener could not start!";
     } else {
@@ -36,7 +36,8 @@ Client::Client(Data_Manager *dm, QObject *parent) :
     //QThread::create(this->hello, dm);
     //broadcastThread = QThread::create(this->hello);
     //QtConcurrent::run(this->hello, dm);
-    QtConcurrent::run(this, &Client::hello);
+
+    //QtConcurrent::run(this, &Client::hello);
 
 
 }
@@ -52,7 +53,7 @@ void Client::hello(){
         qDebug() << "=======================================================\n";
         qDebug() << "Client: Broadcasting basic info -- UDP";
 
-        if(udpSocket.writeDatagram(datagram, QHostAddress::Broadcast, 1515) == -1){
+        if(udpSocket.writeDatagram(datagram, QHostAddress::Broadcast, SERVER_PORT) == -1){
             qDebug() << "Client: Could not send broadcast basic info -- UDP";
         } else {
             qDebug() << "Client: Broadcast of basic info done -- UDP" << udpSocket.state();
@@ -68,6 +69,8 @@ void Client::on_UdpReceive(){
     QByteArray datagram;
     QHostAddress senderIP;
     QString datagramString;
+
+    qDebug() << "Client: on_udpRecaived!";
 
     while (udpSocket->hasPendingDatagrams()) {
         datagram.resize(int(udpSocket->pendingDatagramSize()));
@@ -92,7 +95,7 @@ void Client::sendAvatar(QHostAddress senderIP){
 
     QPixmap avatar(dm->localHost->getAvatar());
     QTcpSocket tcpSocket;
-    tcpSocket.connectToHost(senderIP, 1515);
+    tcpSocket.connectToHost(senderIP, SERVER_PORT);
 
     QByteArray buffer;
 

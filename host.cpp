@@ -6,7 +6,7 @@ Host::Host(bool visible, QString name)
 {
     this->visible = visible;
     this->name = name;
-    avatar = new QPixmap(maskPixmap(QPixmap(":/Icon_IMG/avatar_2.png")));
+    avatar = new QPixmap(maskPixmap(QPixmap(":/Icon_IMG/avatar_3.png")));
 
 }
 
