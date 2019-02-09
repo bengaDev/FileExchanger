@@ -39,10 +39,10 @@ MainWindow::MainWindow(QWidget *parent, Data_Manager* dM) :
     Host h2(true, "host2"); // = new Host(true, "host2");
     h1.createuniqueID();
     h2.createuniqueID();
-    dataManager->addOnlineUser(h1);
-    dataManager->addOnlineUser(h2);
+    ///dataManager->addOnlineUser(h1);
+    ///dataManager->addOnlineUser(h2);
 
-    qDebug() << dataManager->getOnlineUsers().back().getName() << " : " << dataManager->getOnlineUsers().back().uniqueID;
+    ///qDebug() << dataManager->getOnlineUsers().back().getName() << " : " << dataManager->getOnlineUsers().back().uniqueID;
 
     // Temp. connections just to simulate server updates
     connect(ui->ShareBtn, SIGNAL(clicked()), this, SLOT(DEBUG_addToDataManager()));
@@ -51,7 +51,7 @@ MainWindow::MainWindow(QWidget *parent, Data_Manager* dM) :
     // When a list in dataManager is updated, it triggers this SLOT, which will update the GUI
     connect(dataManager, SIGNAL(isUpdated()), this, SLOT(updateAvatarVisible()));
 
-    dataManager->deleteOnlineUser(h1);
+    ///dataManager->deleteOnlineUser(h1);
 
 }
 

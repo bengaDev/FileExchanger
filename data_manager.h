@@ -4,6 +4,9 @@
 #include <host.h>
 #include <QMutex>
 
+#define BROADCAST_PORT 2016
+#define SERVER_PORT 2015
+
 class Data_Manager : public QObject
 {
     Q_OBJECT

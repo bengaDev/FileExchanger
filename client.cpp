@@ -52,7 +52,7 @@ void Client::hello(){
         qDebug() << "=======================================================\n";
         qDebug() << "Client: Broadcasting basic info -- UDP";
 
-        if(udpSocket.writeDatagram(datagram, QHostAddress::Broadcast, 1515) == -1){
+        if(udpSocket.writeDatagram(datagram, QHostAddress::Broadcast/*("192.168.1.80")*/, 1515) == -1){
             qDebug() << "Client: Could not send broadcast basic info -- UDP";
         } else {
             qDebug() << "Client: Broadcast of basic info done -- UDP" << udpSocket.state();

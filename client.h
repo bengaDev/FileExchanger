@@ -1,6 +1,7 @@
 #ifndef CLIENT_H
 #define CLIENT_H
 
+
 #include <QObject>
 #include <QDebug>
 #include <QTcpSocket>
@@ -9,6 +10,7 @@
 #include <QtConcurrent/QtConcurrent>
 #include <QThread>
 #include <data_manager.h>
+
 
 class Client : public QObject
 {
