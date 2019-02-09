@@ -75,7 +75,7 @@ void Server::readBroadcastDatagram(){
 
                 QByteArray moreInfoDatagram = "SERVER REQUEST more info";
                 //QUdpSocket udpSocket_2;
-                udpSocket->writeDatagram(moreInfoDatagram, senderIP, 1516);
+                udpSocket->writeDatagram(moreInfoDatagram, senderIP, BROADCAST_PORT);
                 udpSocket->waitForBytesWritten(5000);
             }  //add else not visible....
 
