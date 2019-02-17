@@ -39,20 +39,37 @@ MainWindow::MainWindow(QWidget *parent, Data_Manager* dM) :
     Host h2(true, "host2"); // = new Host(true, "host2");
     h1.createuniqueID();
     h2.createuniqueID();
-    ///dataManager->addOnlineUser(h1);
-    ///dataManager->addOnlineUser(h2);
 
     ///qDebug() << dataManager->getOnlineUsers().back().getName() << " : " << dataManager->getOnlineUsers().back().uniqueID;
 
     // Temp. connections just to simulate server updates
-    connect(ui->ShareBtn, SIGNAL(clicked()), this, SLOT(DEBUG_addToDataManager()));
-    connect(ui->BackBtn, SIGNAL(clicked()), this, SLOT(DEBUG_clearDataManager()));
+    connect(ui->ShareBtn, SIGNAL(clicked()), this, SLOT(onShareButton()));
+    connect(ui->BackBtn, SIGNAL(clicked()), this, SLOT(DEBUG_addToDataManager()));
 
     // When a list in dataManager is updated, it triggers this SLOT, which will update the GUI
     connect(dataManager, SIGNAL(isUpdated()), this, SLOT(updateAvatarVisible()));
 
+    ///dataManager->addOnlineUser(h1);
     ///dataManager->deleteOnlineUser(h1);
 
+}
+
+void MainWindow::onShareButton(){
+
+    std::list<Host> toSendUsers = dataManager->getToSendUsers();
+
+    if(!toSendUsers.empty()){
+        sendingWindow = new WindowProgressBar(this, dataManager);
+
+        sendingWindow->addAllProgressBars(toSendUsers);
+        //sendingWindow->addAllProgressBars(toSendUsers);
+
+        sendingWindow->show();
+
+
+        // SEND FILE
+        emit dataManager->sendFile_SIGNAL();
+    }
 }
 
 void MainWindow::DEBUG_addToDataManager(){

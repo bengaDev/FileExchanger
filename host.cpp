@@ -6,6 +6,11 @@ Host::Host(bool visible, QString name)
 {
     this->visible = visible;
     this->name = name;
+    //avatar = new QPixmap(maskPixmap(QPixmap("C:/Users/Benjamin/Desktop/Poli/Prog_SISTEMA/PROGETTO/PDS_fileExchanger/Icon_IMG/avatar_4.png")));
+    //avatar = new QPixmap(maskPixmap(QPixmap("./../PDS_fileExchanger/Icon_IMG/avatar_4.png")));
+    //QString a(":\\Icon_IMG\\avatar_2.png");
+    //a.replace('\\', '/');
+    //avatar = new QPixmap(maskPixmap(QPixmap(a)));
     avatar = new QPixmap(maskPixmap(QPixmap(":/Icon_IMG/avatar_2.png")));
 
 }
@@ -40,6 +45,14 @@ void Host::setUniqueID(QUuid uniqueID){
 
 QString Host::getVisibilityStatus(){
     return (visible==true) ? "VISIBLE" : "NOTVISIBLE";  //ENUM
+}
+
+void Host::setIP(QHostAddress ip){
+    this->ipAddr = ip;
+}
+
+QHostAddress Host::getIP(){
+    return ipAddr;
 }
 
 QPixmap Host::maskPixmap(QPixmap pm){

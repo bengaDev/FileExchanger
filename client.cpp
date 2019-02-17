@@ -10,6 +10,8 @@
  *
 */
 
+static const int PayloadSize = 1 * 1024; // 64 KB
+
 Client::Client(Data_Manager *dm, QObject *parent) :
     QObject (parent)
 {
@@ -21,7 +23,7 @@ Client::Client(Data_Manager *dm, QObject *parent) :
     udpSocket = new QUdpSocket(this);
     tcpSocket = new QTcpSocket(this);
 
-    if(!udpSocket->bind(1516, QUdpSocket::ShareAddress)){
+    if(!udpSocket->bind(BROADCAST_PORT, QUdpSocket::ShareAddress)){
         // UDP listener of server could not start
         qDebug() << "Client: UDP listener could not start!";
     } else {
@@ -30,12 +32,15 @@ Client::Client(Data_Manager *dm, QObject *parent) :
     }
 
     connect(udpSocket, SIGNAL(readyRead()), this, SLOT(on_UdpReceive()));
+
+    connect(dm, SIGNAL(sendFile_SIGNAL()), this, SLOT(sendFile()));
     //void (*p) () = this->hello();
     //void (Client::*helloFuncPointer) ();
     //helloFuncPointer = &Client::hello;
     //QThread::create(this->hello, dm);
     //broadcastThread = QThread::create(this->hello);
     //QtConcurrent::run(this->hello, dm);
+
     QtConcurrent::run(this, &Client::hello);
 
 
@@ -52,7 +57,8 @@ void Client::hello(){
         qDebug() << "=======================================================\n";
         qDebug() << "Client: Broadcasting basic info -- UDP";
 
-        if(udpSocket.writeDatagram(datagram, QHostAddress::Broadcast/*("192.168.1.80")*/, 1515) == -1){
+        if(udpSocket.writeDatagram(datagram, QHostAddress::Broadcast/*("192.168.1.255")*/, SERVER_PORT) == -1){
+
             qDebug() << "Client: Could not send broadcast basic info -- UDP";
         } else {
             qDebug() << "Client: Broadcast of basic info done -- UDP" << udpSocket.state();
@@ -68,6 +74,8 @@ void Client::on_UdpReceive(){
     QByteArray datagram;
     QHostAddress senderIP;
     QString datagramString;
+
+    qDebug() << "Client: on_udpRecaived!";
 
     while (udpSocket->hasPendingDatagrams()) {
         datagram.resize(int(udpSocket->pendingDatagramSize()));
@@ -92,13 +100,13 @@ void Client::sendAvatar(QHostAddress senderIP){
 
     QPixmap avatar(dm->localHost->getAvatar());
     QTcpSocket tcpSocket;
-    tcpSocket.connectToHost(senderIP, 1515);
+    tcpSocket.connectToHost(senderIP, SERVER_PORT);
 
     QByteArray buffer;
 
     QDataStream out(&buffer, QIODevice::ReadWrite);
 
-    out << qint32(0); // This inserts in buffer an int (4 bytes), where later the size will be stored
+    out << qint64(0); // This inserts in buffer an int (8 bytes), where later the size will be stored
     out << "avatar of " + dm->localHost->getUniqueID().toByteArray();
     out << avatar; // binary representation of the image
 
@@ -129,6 +137,95 @@ void Client::sendAvatar(QHostAddress senderIP){
 
 
 }
+
+void Client::sendFile(){
+
+    std::list<Host> toSendUsers = dm->getToSendUsers();
+
+    if(!toSendUsers.empty()){
+        for(std::list<Host>::iterator it = toSendUsers.begin(); it != toSendUsers.end(); it++){
+            // ONE SEPARATE THREAD FOR EACH USER TO SEND TO
+            QtConcurrent::run(this, &Client::sendFileToUser, *it);
+        }
+    }
+}
+
+void Client::sendFileToUser(Host h){
+    // -------------------------
+    // INSIDE SEPARATE THREAD
+    // -------------------------
+
+    QFile* file = dm->getFileToSend();
+    if(file->open(QIODevice::ReadOnly) == false){
+        qDebug() << "Error opening File";
+    }
+
+    QTcpSocket tcpSocket;
+    tcpSocket.connectToHost(h.getIP(), SERVER_PORT);
+    qDebug() << tcpSocket.state();
+
+
+    qint64 TotalBytes = file->size();
+    qint64 bytesWritten = 0;
+
+    QByteArray firstPacketPayload;
+    QDataStream out(&firstPacketPayload, QIODevice::ReadWrite);
+
+    out << TotalBytes; // Size of file
+    out << "incoming file from " + dm->localHost->getUniqueID().toByteArray();
+
+    // Each time something new is inserted in a DataStream, an automatic separator of 4 bytes is added
+    // 'firstPacketPayload.size()' already has the first separator included
+    // we are adding +4 bytes for the next separator
+    qint64 metadataByteNum = firstPacketPayload.size() + 4;
+
+
+    // Set Max Value in corresponding ProgressBar of host 'h'
+    emit dm->setProgBarMaximum_SIGNAL(h.getUniqueID(), TotalBytes + metadataByteNum);
+
+
+    // Read part of file and fill first 64KB TCP packet
+    QByteArray buffer = file->read(PayloadSize - metadataByteNum);
+    out << QByteArray(buffer);
+
+    // Send first packet: metadata + payload
+    if((bytesWritten += tcpSocket.write(firstPacketPayload)) < firstPacketPayload.size()){
+        qDebug("Transmission error in sending file");
+    }
+    tcpSocket.waitForBytesWritten(5000);
+
+    // Update ProgressBar of corresponding Host 'h'
+    emit dm->setProgBarValue_SIGNAL(h.getUniqueID(), bytesWritten);
+
+
+    // NOW  CONNECTION IS ESTABLISHED AND FIRST PACKET IS SENT
+    // -> SEND ALL OF THE REMAINING PACKETS IN CASE FILE > 64KB
+    while(!file->atEnd()){
+
+        buffer.clear();
+
+        // If the number of bytes waiting to be written is > 4*PayloadSize
+        //      then don't write anything, and wait untill this number decreases
+        //      to start writing again
+        if(tcpSocket.bytesToWrite() <= 4*PayloadSize){
+
+            buffer = file->read(PayloadSize);
+
+            if((bytesWritten += tcpSocket.write(buffer)) < buffer.size()){
+                qDebug("Transmission error in sending file");
+            }
+            if(!tcpSocket.waitForBytesWritten(5000)){
+                qDebug() << "ERROR";
+            }
+        }
+
+        // Update progress bar
+        emit dm->setProgBarValue_SIGNAL(h.getUniqueID(), bytesWritten);
+    }
+
+
+}
+
 
 Client::~Client(){
     atomicLoopFlag = 0;

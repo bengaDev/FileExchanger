@@ -1,10 +1,12 @@
 #include "data_manager.h"
 
-Data_Manager::Data_Manager(QString localHostName)
+Data_Manager::Data_Manager(QString localHostName, QString fileName)
 {
     bool visible = true;
     localHost = new Host(visible, localHostName);
     localHost->createuniqueID();
+    fileToSend = new QFile(fileName);
+
 }
 
 void Data_Manager::addOnlineUser(Host newHost){
@@ -23,13 +25,34 @@ std::list<Host> Data_Manager::getOnlineUsers(){
     return onlineUsers;
 }
 
+std::list<Host> Data_Manager::getToSendUsers(){
+    return toSend;
+}
+
 bool Data_Manager::isPresentInOnlineUsers(QUuid id){
-    for(std::list<Host>::iterator it = onlineUsers.begin(); it != onlineUsers.end(); it++){
-        if(it->getUniqueID() == id){
-            return true;
+    mutex.lock();
+
+    if(!queueNextOnlineUsers.empty()){
+        for(std::list<Host>::iterator it = queueNextOnlineUsers.begin(); it != queueNextOnlineUsers.end(); it++){
+            if(it->getUniqueID() == id){
+                mutex.unlock();
+                return true;
+            }
         }
     }
+
+    if(!onlineUsers.empty()){
+        for(std::list<Host>::iterator it = onlineUsers.begin(); it != onlineUsers.end(); it++){
+            if(it->getUniqueID() == id){
+                mutex.unlock();
+                return true;
+            }
+        }
+    }
+
+    mutex.unlock();
     return false;
+
 }
 
 void Data_Manager::addToSendUsers(QUuid uniqueID){
@@ -68,7 +91,16 @@ void Data_Manager::setAvatarOfNextOnlineUser(QPixmap avatar, QUuid uniqueID){
     mutex.unlock();
 }
 
+QFile* Data_Manager::getFileToSend(){
+    return fileToSend;
+}
+
+
 void Data_Manager::DEBUG_clearOnlineUsers(){
     onlineUsers.clear();
     emit isUpdated();
+}
+
+void Data_Manager::DEBUG_trySlot(QUuid id, qint64 max){
+    qDebug() << "TRY" << id << max;
 }

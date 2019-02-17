@@ -21,6 +21,7 @@ public:
 
 public slots:
     void on_UdpReceive();
+    void sendFile();
 
 
 private:
@@ -32,6 +33,7 @@ private:
 
     void hello();
     void sendAvatar(QHostAddress);
+    void sendFileToUser(Host h);
     //void (Client::*p)() = &Client::hello;
     QTcpSocket *broadcastTcpSocket;
 

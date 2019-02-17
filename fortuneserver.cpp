@@ -34,28 +34,32 @@ void FortuneServer::threadFunction(Data_Manager* dm, qintptr socketDescriptor){
     }*/
     QDataStream in(&tcpSocket);
     QString dataType;
-    qint32 msgSize = -1;
+    qint64 msgSize = -1;
     qint64 temp = tcpSocket.bytesAvailable();
 
     if(temp && msgSize==-1){
         in >> msgSize;
     }
 
-    while(tcpSocket.bytesAvailable() < msgSize - 4 ){
-        if(!tcpSocket.waitForReadyRead(5000)){
-            tcpSocket.disconnectFromHost();
-            break;
-        }
-    }
-
     in >> sentData;
 
-
+qint64 receivedBytes = 0;
     if(sentData.startsWith("avatar of ")){
+
+        while(tcpSocket.bytesAvailable() < msgSize - 8 ){
+            qDebug() << "Bytes Available (to be read) : " << tcpSocket.bytesAvailable();
+            if(!tcpSocket.waitForReadyRead(5000)){
+                tcpSocket.disconnectFromHost();
+                break;
+            }
+        }
+
         qDebug() << "Fortune Server: Avatar received (separate thread)";
         qDebug() << "Received data size: " << sentData.size();
         //tcpSocket.disconnectFromHost();
         in >> avatar;
+
+        qDebug() << "Received avatar size: " << avatar.size();
 
         QStringList stringTokens;
         QString uniqueID;
@@ -65,7 +69,7 @@ void FortuneServer::threadFunction(Data_Manager* dm, qintptr socketDescriptor){
         sentData.remove(36, 1); // for closed brace '}'
 
         QString data(sentData);
-        stringTokens = data.split('_');
+        stringTokens = data.split('_');  //can be removed
         uniqueID = stringTokens.at(0);
 
         sentData.remove(0, 37); // for QUuid delete
@@ -73,44 +77,64 @@ void FortuneServer::threadFunction(Data_Manager* dm, qintptr socketDescriptor){
         dm->setAvatarOfNextOnlineUser(avatar, QUuid(uniqueID));
 
     }
-
-    // READING DOESN'T WORK PROPERLY YET
-    // Probably the data that is sent (the avatar) is too big and a while 'waitForReadyRead' is needed.
-    // Also a better solution would probably be to use signals and slots
-    /*tcpSocket.waitForReadyRead(5000);
-    sentData = tcpSocket.readAll();
-
-    if(sentData.startsWith("avatar of ")){
-        qDebug() << "Fortune Server: Avatar received (separate thread)";
-        qDebug() << "Received data size: " << sentData.size();
-        //tcpSocket.disconnectFromHost();
+    else if(sentData.startsWith("incoming file from ")){
+        qint64 fileSize = msgSize;
+        QByteArray fileMp3, buffer;
+        qint64 receivedFileSize = 0;
 
 
-        QStringList stringTokens;
-        QString uniqueID;
-        QBuffer *buffer = new QBuffer();
+        // Keep reading from 'tcpSocket' untill all the bytes have been received
+        while(receivedBytes < fileSize){
 
-        sentData.remove(0, 10); // for 'avatar of '
-        sentData.remove(0, 1); // for open brace '{'
-        sentData.remove(36, 1); // for closed brace '}'
+            // Wait untill incoming data amounts to >= 'PayloadSize' Bytes
+            while(tcpSocket.bytesAvailable() < 64*1024){
+                // If waiting for more than 5 seconds, exit the inner 'while'
+                // and check if this waiting is due to end of transmission (receivedBytes>fileSize)
+                // or if it's just because of poor connection, in which case the program will
+                // re-enter in this while
+                if(!tcpSocket.waitForReadyRead(5000)){
+                    break;
+                }
+            }
+            receivedBytes += tcpSocket.bytesAvailable();
 
-        QString data(sentData);
-        stringTokens = data.split('_');
-        uniqueID = stringTokens.at(0);
+            fileMp3.append(tcpSocket.readAll());
+            receivedFileSize = fileMp3.size();
+        }
 
-        sentData.remove(0, 37); // for QUuid delete
-        buffer->open(QIODevice::ReadWrite);
-        buffer->write(sentData);
-        buffer->seek(0);
+        fileMp3.remove(0, 4);
 
-        QPixmap image;
-        QImage image_2;
-        QImage tryIm = QImage::fromData(sentData, "PNG");
-        //uint size = sentData.size();
-        image.loadFromData(sentData);
-        image.loadFromData(buffer->buffer());
-        image_2.loadFromData(buffer->buffer());
+        QFile file("./success.mp3");
+        file.open(QIODevice::WriteOnly);
+        file.write(fileMp3);
+        file.close();
 
 
-    }*/
+
+        /* =============== DOESN'T COMPLETELY WORK
+         * while((receivedBytes = tcpSocket.bytesAvailable()) < fileSize  ){
+            qDebug() << "Bytes Available (to be read) : " << tcpSocket.bytesAvailable();
+
+
+            if(!tcpSocket.waitForReadyRead(5000)){
+                qDebug() << "ERROR";
+                //tcpSocket.disconnectFromHost();
+                //break;
+            }
+
+        }
+        if(receivedBytes >= fileSize){
+            in >> buffer;
+            fileMp3.append(buffer);
+            qint64 temp = buffer.size();
+            buffer.clear();
+            in >> buffer;
+            qint64 temp1 = buffer.size();
+            tcpSocket.close();
+        }*/
+
+
+    }
+
+
 }

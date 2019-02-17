@@ -35,7 +35,8 @@ SOURCES += \
     client.cpp \
     flowlayout.cpp \
     containergui.cpp \
-    fortuneserver.cpp
+    fortuneserver.cpp \
+    windowprogressbar.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -45,10 +46,12 @@ HEADERS += \
     client.h \
     flowlayout.h \
     containergui.h \
-    fortuneserver.h
+    fortuneserver.h \
+    windowprogressbar.h
 
 FORMS += \
-        mainwindow.ui
+        mainwindow.ui \
+    windowprogressbar.ui
 
 RESOURCES += \
     systray.qrc \

@@ -5,6 +5,7 @@
 #include <QUuid>
 #include <QBrush>
 #include <QPainter>
+#include <QHostAddress>
 
 class Host
 {
@@ -19,6 +20,8 @@ public:
     void setAvatar(QPixmap);
     void setUniqueID(QUuid uniqueID);
     bool operator==(Host h);
+    void setIP(QHostAddress);
+    QHostAddress getIP();
 
     QUuid uniqueID; // TO PUT IN PRIVATE IN FINAL VERSION ----
 
@@ -26,6 +29,7 @@ private:
     bool visible;
     QString name;
     QPixmap* avatar;
+    QHostAddress ipAddr;
 
     QPixmap maskPixmap(QPixmap);
 

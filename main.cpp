@@ -14,7 +14,16 @@ int main(int argc, char *argv[])
 
     QApplication a(argc, argv);
 
-    Data_Manager localDataManager("localHostName");
+    QString fileName("C:/Users/Benjamin/Desktop/Poli/Prog_SISTEMA/PROGETTO/PDS_fileExchanger/Icon_IMG/I Feel Good.mp3");
+    //QString fileName("./../PDS_fileExchanger/Icon_IMG/avatar_4.png");
+    //QString fileName(":Icon_IMG/avatar_2.png");
+
+    for (int i = 1; i < argc; ++i){
+        //WILL HAVE TO BE IMPLEMENTED IN FINAL VERSION
+        //fileName = argv[i];
+    }
+
+    Data_Manager localDataManager("localHostName", fileName);
 
     Server myServer(&localDataManager); //THIS STARTS THE SERVER
 
@@ -22,20 +31,7 @@ int main(int argc, char *argv[])
 
     Client myClient(&localDataManager);
 
-    /*QThread t1;
 
-    t1.setObjectName("Client Thread");
-
-    QObject::connect(&t1, &QThread::started, &myClient, &Client::hello);
-    QObject::connect(&t1, SIGNAL(finished()), &a, SLOT(quit()));  //probably this close the application when client is closed
-
-    myClient.moveToThread(&t1);
-    t1.start();  //Client starts*/
-
-    //qDebug() << "Main Thread continue...";
-
-    //myClient->moveToThread(QApplication::instance()->thread()); //moves an object to the main thread
-    //note that you can’t call a method of an object in another thread directly so instead you use signals and slots
 
     MainWindow w(nullptr, &localDataManager);
 
