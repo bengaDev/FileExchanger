@@ -4,6 +4,7 @@
 #include "data_manager.h"
 #include "flowlayout.h"
 #include "containergui.h"
+#include "windowprogressbar.h"
 
 #include <QMainWindow>
 #include <QCloseEvent>
@@ -38,6 +39,7 @@ private slots:
     void DEBUG_clearDataManager();
     void addUuidToSend_SLOT(QUuid);
     void deleteUuidToSend_SLOT(QUuid);
+    void onShareButton();
 
 private:
     Ui::MainWindow *ui;
@@ -60,6 +62,8 @@ private:
     QSystemTrayIcon *trayIcon;
 
     FlowLayout *flowLayout_ScrollArea;
+
+    WindowProgressBar *sendingWindow;
 };
 
 #endif // MAINWINDOW_H

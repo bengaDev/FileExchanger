@@ -22,11 +22,11 @@ MainWindow::MainWindow(QWidget *parent, Data_Manager* dM) :
         setWindowIcon(QIcon(":/Icon_IMG/shareIMG.png"));
     }
 
-    QPixmap pix = dataManager->localHost->getAvatar();
+    /*QPixmap pix = dataManager->localHost->getAvatar();
     QPixmap maskedPixMap = maskPixMap(pix);
-    flowLayout_ScrollArea = new FlowLayout();
+    ui->toolButton->setIcon(QIcon(maskedPixMap));*/
 
-    ui->toolButton->setIcon(QIcon(maskedPixMap));
+    flowLayout_ScrollArea = new FlowLayout();
 
     ui->BackBtn->setStyleSheet("QPushButton:hover{background-color: yellow}");
 
@@ -39,20 +39,37 @@ MainWindow::MainWindow(QWidget *parent, Data_Manager* dM) :
     Host h2(true, "host2"); // = new Host(true, "host2");
     h1.createuniqueID();
     h2.createuniqueID();
-    dataManager->addOnlineUser(h1);
-    dataManager->addOnlineUser(h2);
 
-    qDebug() << dataManager->getOnlineUsers().back().getName() << " : " << dataManager->getOnlineUsers().back().uniqueID;
+    ///qDebug() << dataManager->getOnlineUsers().back().getName() << " : " << dataManager->getOnlineUsers().back().uniqueID;
 
     // Temp. connections just to simulate server updates
-    connect(ui->ShareBtn, SIGNAL(clicked()), this, SLOT(DEBUG_addToDataManager()));
-    connect(ui->BackBtn, SIGNAL(clicked()), this, SLOT(DEBUG_clearDataManager()));
+    connect(ui->ShareBtn, SIGNAL(clicked()), this, SLOT(onShareButton()));
+    connect(ui->BackBtn, SIGNAL(clicked()), this, SLOT(DEBUG_addToDataManager()));
 
     // When a list in dataManager is updated, it triggers this SLOT, which will update the GUI
     connect(dataManager, SIGNAL(isUpdated()), this, SLOT(updateAvatarVisible()));
 
-    dataManager->deleteOnlineUser(h1);
+    ///dataManager->addOnlineUser(h1);
+    ///dataManager->deleteOnlineUser(h1);
 
+}
+
+void MainWindow::onShareButton(){
+
+    std::list<Host> toSendUsers = dataManager->getToSendUsers();
+
+    if(!toSendUsers.empty()){
+        sendingWindow = new WindowProgressBar(this, dataManager);
+
+        sendingWindow->addAllProgressBars(toSendUsers);
+        //sendingWindow->addAllProgressBars(toSendUsers);
+
+        sendingWindow->show();
+
+
+        // SEND FILE
+        emit dataManager->sendFile_SIGNAL();
+    }
 }
 
 void MainWindow::DEBUG_addToDataManager(){
@@ -96,8 +113,8 @@ void MainWindow::updateAvatarVisible(){
 }
 
 ContainerGUI* MainWindow::fromHost_to_Container(Host h){
-    QPixmap pix = h.getAvatar();
-    QPixmap maskedPixmap = maskPixMap(pix);
+
+    QPixmap maskedPixmap = h.getAvatar();
 
     ContainerGUI *container = new ContainerGUI(nullptr, maskedPixmap);
 
@@ -139,27 +156,6 @@ QString MainWindow::avatarStyleSheet(){
             "border: 5px solid blue;}";
 }
 
-QPixmap MainWindow::maskPixMap(QPixmap pm){
-    QPixmap scaledPixmap = pm.scaled(100, 100, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation).copy(0, 0, 100, 100);
-    QImage out_img(100, 100, QImage::Format_ARGB32);
-
-    out_img.fill(Qt::transparent);
-
-    QBrush brush(scaledPixmap);
-    QPainter painter(&out_img);
-    painter.setBrush(brush);
-    painter.setPen(Qt::NoPen);
-    painter.setRenderHint(QPainter::Antialiasing, true);
-
-    // Here if x and y of 'drawEllipse' are at 'n' and 'm', then width and height must be at
-    // (100 -2*n) and (100 - 2*m) respectively in order to have a centered circular image
-    painter.drawEllipse(3, 3, 94, 94);
-
-    painter.end();
-
-    QPixmap outPix = QPixmap::fromImage(out_img);
-    return outPix;
-}
 
 // ===========================================
 // Tray Icon and window methods

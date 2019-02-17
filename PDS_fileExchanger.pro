@@ -10,6 +10,7 @@ QT       += network
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = PDS_fileExchanger
+CONFIG += console
 TEMPLATE = app
 
 # The following define makes your compiler emit warnings if you use
@@ -33,7 +34,9 @@ SOURCES += \
     server.cpp \
     client.cpp \
     flowlayout.cpp \
-    containergui.cpp
+    containergui.cpp \
+    fortuneserver.cpp \
+    windowprogressbar.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -42,10 +45,13 @@ HEADERS += \
     server.h \
     client.h \
     flowlayout.h \
-    containergui.h
+    containergui.h \
+    fortuneserver.h \
+    windowprogressbar.h
 
 FORMS += \
-        mainwindow.ui
+        mainwindow.ui \
+    windowprogressbar.ui
 
 RESOURCES += \
     systray.qrc \

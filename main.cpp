@@ -1,8 +1,12 @@
 #include "mainwindow.h"
 #include "data_manager.h"
+#include "server.h"
+#include "client.h"
 #include <QApplication>
 #include <QSystemTrayIcon>
 #include <QMessageBox>
+#include <QThread>
+#include <QtConcurrent/QtConcurrent>
 
 int main(int argc, char *argv[])
 {
@@ -10,7 +14,24 @@ int main(int argc, char *argv[])
 
     QApplication a(argc, argv);
 
-    Data_Manager localDataManager("localHostName");
+    QString fileName("C:/Users/Benjamin/Desktop/Poli/Prog_SISTEMA/PROGETTO/PDS_fileExchanger/Icon_IMG/I Feel Good.mp3");
+    //QString fileName("./../PDS_fileExchanger/Icon_IMG/avatar_4.png");
+    //QString fileName(":Icon_IMG/avatar_2.png");
+
+    for (int i = 1; i < argc; ++i){
+        //WILL HAVE TO BE IMPLEMENTED IN FINAL VERSION
+        //fileName = argv[i];
+    }
+
+    Data_Manager localDataManager("localHostName", fileName);
+
+    Server myServer(&localDataManager); //THIS STARTS THE SERVER
+
+    QThread::currentThread()->setObjectName("Main Thread");
+
+    Client myClient(&localDataManager);
+
+
 
     MainWindow w(nullptr, &localDataManager);
 
