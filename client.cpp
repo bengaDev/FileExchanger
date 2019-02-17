@@ -57,6 +57,7 @@ void Client::hello(){
         qDebug() << "=======================================================\n";
         qDebug() << "Client: Broadcasting basic info -- UDP";
 
+
         if(udpSocket.writeDatagram(datagram, QHostAddress::Broadcast/*("192.168.1.255")*/, SERVER_PORT) == -1){
 
             qDebug() << "Client: Could not send broadcast basic info -- UDP";
@@ -101,8 +102,10 @@ void Client::sendAvatar(QHostAddress senderIP){
     QPixmap avatar(dm->localHost->getAvatar());
     QTcpSocket tcpSocket;
     tcpSocket.connectToHost(senderIP, SERVER_PORT);
-
     QByteArray buffer;
+
+    ///QFile file;
+    ///buffer = file.read(1024); to send a file
 
     QDataStream out(&buffer, QIODevice::ReadWrite);
 
