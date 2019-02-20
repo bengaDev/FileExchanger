@@ -79,11 +79,15 @@ qint64 receivedBytes = 0;
     }
     else if(sentData.startsWith("incoming file from ")){
         qint64 fileSize = msgSize;
-        QByteArray fileMp3, buffer;
-        qint64 receivedFileSize = 0;
+        QByteArray fileBuffer;
         QString fileName;
+        bool isFirstPacket = true;
 
         in >> fileName;
+
+        QFile file("./" + fileName);
+
+        file.open(QIODevice::WriteOnly);
 
         // Keep reading from 'tcpSocket' untill all the bytes have been received
         while(receivedBytes < fileSize){
@@ -100,15 +104,16 @@ qint64 receivedBytes = 0;
             }  //64Kb are arrived now...
             receivedBytes += tcpSocket.bytesAvailable();
 
-            fileMp3.append(tcpSocket.readAll());
-            receivedFileSize = fileMp3.size();
+            fileBuffer = tcpSocket.readAll();
+            if(isFirstPacket){
+                fileBuffer.remove(0, 4);  // remaining separator at the start before QbyteArray
+                isFirstPacket = false;
+            }
+
+            file.write(fileBuffer);
         }
 
-        fileMp3.remove(0, 4);  // remaining separator at the start before QbyteArray
-
-        QFile file("./" + fileName);
-        file.open(QIODevice::WriteOnly);
-        file.write(fileMp3);
+        file.write(fileBuffer);
 
         file.close();
 

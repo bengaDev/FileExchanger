@@ -176,7 +176,7 @@ void Client::sendFileToUser(Host h){
 
     out << TotalBytes; // Size of file
     out << "incoming file from " + dm->localHost->getUniqueID().toByteArray();
-    out << file->fileName();
+    out << dm->getFileName();
 
     // Each time something new is inserted in a DataStream, an automatic separator of 4 bytes is added
     // 'firstPacketPayload.size()' already has the first separator included
