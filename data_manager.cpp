@@ -5,10 +5,14 @@ Data_Manager::Data_Manager(QString localHostName, QString filePath)
     bool visible = true;
     localHost = new Host(visible, localHostName);
     localHost->createuniqueID();
-    fileToSend = new QFile(filePath);
-    QStringList tokens;
-    tokens = filePath.split("/");
-    fileName = tokens.last();
+
+    if(filePath !=nullptr){
+        fileToSend = new QFile(filePath);
+        QStringList tokens;
+        tokens = filePath.split("/");
+        fileName = tokens.last();
+        qDebug() << "DataManager: FileName : " << fileName;
+    }
 }
 
 void Data_Manager::addOnlineUser(Host newHost){

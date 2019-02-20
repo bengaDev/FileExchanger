@@ -34,6 +34,7 @@ private:
     void hello();
     void sendAvatar(QHostAddress);
     void sendFileToUser(Host h);
+    void sendingFile(QTcpSocket* tcpSocket, QFile* file, Host h);
     //void (Client::*p)() = &Client::hello;
     QTcpSocket *broadcastTcpSocket;
 

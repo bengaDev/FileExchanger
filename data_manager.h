@@ -41,8 +41,8 @@ public slots:
     void DEBUG_trySlot(QUuid, qint64);
 
 private:
-    QFile *fileToSend;
-    QString fileName;
+    QFile *fileToSend = nullptr;
+    QString fileName = nullptr;
     std::list<Host> onlineUsers; // le liste devono avere un lock?
     std::list<Host> toSend;
     std::list<Host> queueNextOnlineUsers;

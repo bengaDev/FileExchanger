@@ -81,11 +81,11 @@ qint64 receivedBytes = 0;
         qint64 fileSize = msgSize;
         QByteArray fileBuffer;
         QString fileName;
-        bool isFirstPacket = true;
 
         in >> fileName;
 
         QFile file("./" + fileName);
+        qDebug() << "-------------File name is: " << fileName;
 
         file.open(QIODevice::WriteOnly);
 
@@ -105,10 +105,6 @@ qint64 receivedBytes = 0;
             receivedBytes += tcpSocket.bytesAvailable();
 
             fileBuffer = tcpSocket.readAll();
-            if(isFirstPacket){
-                fileBuffer.remove(0, 4);  // remaining separator at the start before QbyteArray
-                isFirstPacket = false;
-            }
 
             file.write(fileBuffer);
         }

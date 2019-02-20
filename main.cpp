@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
         //fileName = argv[i];
     }
 
-    Data_Manager localDataManager("localHostName", fileName);
+    Data_Manager localDataManager("localHostName", fileName);  //filename sarà null perchè non entro nel for(argc..)
 
     Server myServer(&localDataManager); //THIS STARTS THE SERVER
 

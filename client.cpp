@@ -169,38 +169,46 @@ void Client::sendFileToUser(Host h){
 
 
     qint64 TotalBytes = file->size();
-    qint64 bytesWritten = 0;
 
-    QByteArray firstPacketPayload;  //meta-data pacet
+    qDebug() << "---------------File Size: " << TotalBytes;
+
+    QByteArray firstPacketPayload;  //meta-data packet
     QDataStream out(&firstPacketPayload, QIODevice::ReadWrite);
 
     out << TotalBytes; // Size of file
     out << "incoming file from " + dm->localHost->getUniqueID().toByteArray();
     out << dm->getFileName();
 
-    // Each time something new is inserted in a DataStream, an automatic separator of 4 bytes is added
-    // 'firstPacketPayload.size()' already has the first separator included
-    // we are adding +4 bytes for the next separator
-    qint64 metadataByteNum = firstPacketPayload.size() + 4;
-
-
-    // Set Max Value in corresponding ProgressBar of host 'h'
-    emit dm->setProgBarMaximum_SIGNAL(h.getUniqueID(), TotalBytes + metadataByteNum);
-
-
-    // Read part of file and fill first 64KB TCP packet
-    QByteArray buffer = file->read(PayloadSize - metadataByteNum);
-    out << QByteArray(buffer);
-
-    // Send first packet: metadata + payload
-    if((bytesWritten += tcpSocket.write(firstPacketPayload)) < firstPacketPayload.size()){
+    // Send first packet: metadata
+    if(tcpSocket.write(firstPacketPayload) < firstPacketPayload.size()){
         qDebug("Transmission error in sending file");
     }
     tcpSocket.waitForBytesWritten(5000);
 
-    // Update ProgressBar of corresponding Host 'h'
-    emit dm->setProgBarValue_SIGNAL(h.getUniqueID(), bytesWritten);
+    // Each time something new is inserted in a DataStream, an automatic separator of 4 bytes is added
+    // 'firstPacketPayload.size()' already has the first separator included
+    // we are adding +4 bytes for the next separator
 
+
+    // Set Max Value in corresponding ProgressBar of host 'h'
+    emit dm->setProgBarMaximum_SIGNAL(h.getUniqueID(), TotalBytes);
+
+    ////// WAIT FOR CLIENT TO ACCEPT REQUEST!//////
+    //read on tcp socket -> receive ok from client
+    // if tcpSocket.waitForReadyRead(5000) -> returns true ho ricevuto qualcosa
+    // se client send ok vado avanti
+    // se client send NOT ALLOWED annullo l'invio del file
+
+
+    sendingFile(&tcpSocket, file, h);
+
+
+}
+
+void Client::sendingFile(QTcpSocket* tcpSocket, QFile* file, Host h){
+    // Read part of file and fill first 64KB TCP packet
+    qint64 bytesWritten = 0;
+    QByteArray buffer = file->read(PayloadSize);
 
     // NOW  CONNECTION IS ESTABLISHED AND FIRST PACKET IS SENT
     // -> SEND ALL OF THE REMAINING PACKETS IN CASE FILE > 64KB
@@ -211,14 +219,14 @@ void Client::sendFileToUser(Host h){
         // If the number of bytes waiting to be written is > 4*PayloadSize
         //      then don't write anything, and wait untill this number decreases
         //      to start writing again
-        if(tcpSocket.bytesToWrite() <= 4*PayloadSize){
+        if(tcpSocket->bytesToWrite() <= 4*PayloadSize){
 
             buffer = file->read(PayloadSize);
 
-            if((bytesWritten += tcpSocket.write(buffer)) < buffer.size()){
+            if((bytesWritten += tcpSocket->write(buffer)) < buffer.size()){
                 qDebug("Transmission error in sending file");
             }
-            if(!tcpSocket.waitForBytesWritten(5000)){
+            if(!tcpSocket->waitForBytesWritten(5000)){
                 qDebug() << "ERROR";
             }
         }
@@ -226,7 +234,7 @@ void Client::sendFileToUser(Host h){
         // Update progress bar
         emit dm->setProgBarValue_SIGNAL(h.getUniqueID(), bytesWritten);
     }
-
+    qDebug() << "--------------BytesWritten: " << bytesWritten ;
 
 }
 
