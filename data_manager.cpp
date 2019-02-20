@@ -1,12 +1,14 @@
 #include "data_manager.h"
 
-Data_Manager::Data_Manager(QString localHostName, QString fileName)
+Data_Manager::Data_Manager(QString localHostName, QString filePath)
 {
     bool visible = true;
     localHost = new Host(visible, localHostName);
     localHost->createuniqueID();
-    fileToSend = new QFile(fileName);
-
+    fileToSend = new QFile(filePath);
+    QStringList tokens;
+    tokens = filePath.split("/");
+    fileName = tokens.last();
 }
 
 void Data_Manager::addOnlineUser(Host newHost){
@@ -95,6 +97,9 @@ QFile* Data_Manager::getFileToSend(){
     return fileToSend;
 }
 
+QString Data_Manager::getFileName(){
+    return fileName;
+}
 
 void Data_Manager::DEBUG_clearOnlineUsers(){
     onlineUsers.clear();

@@ -68,7 +68,7 @@ void MainWindow::onShareButton(){
 
 
         // SEND FILE
-        emit dataManager->sendFile_SIGNAL();
+        emit dataManager->sendFile_SIGNAL();  //signal in datamanager that connects with the client
     }
 }
 

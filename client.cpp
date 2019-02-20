@@ -58,7 +58,7 @@ void Client::hello(){
         qDebug() << "Client: Broadcasting basic info -- UDP";
 
 
-        if(udpSocket.writeDatagram(datagram, QHostAddress::Broadcast/*("192.168.1.255")*/, SERVER_PORT) == -1){
+        if(udpSocket.writeDatagram(datagram, QHostAddress("192.168.1.255"), SERVER_PORT) == -1){
 
             qDebug() << "Client: Could not send broadcast basic info -- UDP";
         } else {
@@ -171,11 +171,12 @@ void Client::sendFileToUser(Host h){
     qint64 TotalBytes = file->size();
     qint64 bytesWritten = 0;
 
-    QByteArray firstPacketPayload;
+    QByteArray firstPacketPayload;  //meta-data pacet
     QDataStream out(&firstPacketPayload, QIODevice::ReadWrite);
 
     out << TotalBytes; // Size of file
     out << "incoming file from " + dm->localHost->getUniqueID().toByteArray();
+    out << file->fileName();
 
     // Each time something new is inserted in a DataStream, an automatic separator of 4 bytes is added
     // 'firstPacketPayload.size()' already has the first separator included

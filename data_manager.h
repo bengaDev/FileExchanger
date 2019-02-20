@@ -27,6 +27,7 @@ public:
     std::list<Host> getOnlineUsers();
     std::list<Host> getToSendUsers();
     QFile* getFileToSend();
+    QString getFileName();
 
 signals:
     void isUpdated();
@@ -41,6 +42,7 @@ public slots:
 
 private:
     QFile *fileToSend;
+    QString fileName;
     std::list<Host> onlineUsers; // le liste devono avere un lock?
     std::list<Host> toSend;
     std::list<Host> queueNextOnlineUsers;
