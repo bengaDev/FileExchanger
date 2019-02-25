@@ -10,7 +10,16 @@ FortuneServer::FortuneServer(Data_Manager *dm, QObject *parent)
 
 void FortuneServer::incomingConnection(qintptr socketDescriptor){
     qDebug() << "Fortune Server: incoming connection (could be avatar or file)";
-    QtConcurrent::run(this->threadFunction, dm, socketDescriptor);
+    QThread *receiverThread = new QThread;
+    ReceiverWorker *receiver = new ReceiverWorker(dm, socketDescriptor);
+    receiver->moveToThread(receiverThread);
+
+    connect(receiverThread, SIGNAL (started()), receiver, SLOT (metadataStageSTART()));
+    connect(receiver, SIGNAL (closeThread()), receiverThread, SLOT (quit()));
+    connect(receiver, SIGNAL (closeThread()), receiver, SLOT (deleteLater()));
+    connect(receiverThread, SIGNAL (closeThread()), receiverThread, SLOT (deleteLater()));
+    receiverThread->start();
+    //QtConcurrent::run(this, &FortuneServer::threadFunction, dm, socketDescriptor);
 }
 
 void FortuneServer::threadFunction(Data_Manager* dm, qintptr socketDescriptor){
@@ -81,6 +90,12 @@ qint64 receivedBytes = 0;
         qint64 fileSize = msgSize;
         QByteArray fileBuffer;
         QString fileName;
+
+        QString uniqueID;
+        QString data(sentData);
+        data.remove("incoming file from {");
+        data.remove("}");
+        uniqueID = data;
 
         in >> fileName;
 

@@ -49,9 +49,24 @@ MainWindow::MainWindow(QWidget *parent, Data_Manager* dM) :
     // When a list in dataManager is updated, it triggers this SLOT, which will update the GUI
     connect(dataManager, SIGNAL(isUpdated()), this, SLOT(updateAvatarVisible()));
 
+    // Connections for GUI receiver side
+    connect(dataManager, SIGNAL(metadataStageEND(qint64, QString)), this, SLOT(messageBoxYES_NO(qint64, QString)));
     ///dataManager->addOnlineUser(h1);
     ///dataManager->deleteOnlineUser(h1);
 
+}
+
+void MainWindow::messageBoxYES_NO(qint64 fileSize, QString fileName){
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, "Incoming file", "Do you want to accept file '"
+                                  + fileName + "' of size " + fileSize + "bytes?", QMessageBox::Yes|QMessageBox::No);
+
+    if(reply == QMessageBox::Yes){
+        emit dataManager->messageBoxYes();
+    }
+    else if(reply == QMessageBox::No){
+
+    }
 }
 
 void MainWindow::onShareButton(){

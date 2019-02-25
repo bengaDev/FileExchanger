@@ -14,6 +14,7 @@
 #include <QIcon>
 #include <QLabel>
 #include <QPainter>
+#include <QMessageBox>
 
 
 namespace Ui {
@@ -40,6 +41,7 @@ private slots:
     void addUuidToSend_SLOT(QUuid);
     void deleteUuidToSend_SLOT(QUuid);
     void onShareButton();
+    void messageBoxYES_NO(qint64, QString);
 
 private:
     Ui::MainWindow *ui;

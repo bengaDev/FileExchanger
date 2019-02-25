@@ -162,7 +162,7 @@ void Client::sendFileToUser(Host h){
     if(file->open(QIODevice::ReadOnly) == false){
         qDebug() << "Error opening File";
     }
-
+    
     QTcpSocket tcpSocket;
     tcpSocket.connectToHost(h.getIP(), SERVER_PORT);
     qDebug() << tcpSocket.state();
@@ -200,7 +200,12 @@ void Client::sendFileToUser(Host h){
     // se client send NOT ALLOWED annullo l'invio del file
 
 
-    sendingFile(&tcpSocket, file, h);
+    if(tcpSocket.waitForReadyRead(10000)){
+        QByteArray response = tcpSocket.readAll();
+        if(response == "YES"){
+            sendingFile(&tcpSocket, file, h);
+        }
+    }
 
 
 }
@@ -208,7 +213,7 @@ void Client::sendFileToUser(Host h){
 void Client::sendingFile(QTcpSocket* tcpSocket, QFile* file, Host h){
     // Read part of file and fill first 64KB TCP packet
     qint64 bytesWritten = 0;
-    QByteArray buffer = file->read(PayloadSize);
+    QByteArray buffer;
 
     // NOW  CONNECTION IS ESTABLISHED AND FIRST PACKET IS SENT
     // -> SEND ALL OF THE REMAINING PACKETS IN CASE FILE > 64KB

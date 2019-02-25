@@ -35,6 +35,10 @@ signals:
     void setProgBarMaximum_SIGNAL(QUuid, qint64);
     void setProgBarValue_SIGNAL(QUuid, qint64);
 
+    // Signals for GUI-ReceiverWorker communication
+    void metadataStageEND(qint64, QString);
+    void messageBoxYes();
+
 public slots:
     void addToSendUsers(QUuid uniqueID);
     void deleteToSendUsers(QUuid uniqueID);

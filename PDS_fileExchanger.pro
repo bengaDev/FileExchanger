@@ -36,7 +36,8 @@ SOURCES += \
     flowlayout.cpp \
     containergui.cpp \
     fortuneserver.cpp \
-    windowprogressbar.cpp
+    windowprogressbar.cpp \
+    receiverworker.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -47,7 +48,8 @@ HEADERS += \
     flowlayout.h \
     containergui.h \
     fortuneserver.h \
-    windowprogressbar.h
+    windowprogressbar.h \
+    receiverworker.h
 
 FORMS += \
         mainwindow.ui \

@@ -3,7 +3,10 @@
 
 #include <QTcpServer>
 #include <QTcpSocket>
+#include <QMessageBox>
+#include <QThread>
 #include "data_manager.h"
+#include "receiverworker.h"
 
 
 class FortuneServer : public QTcpServer
@@ -14,7 +17,7 @@ private:
     Data_Manager *dm;
 public:
     FortuneServer(Data_Manager* dm, QObject *parent = 0);
-    static void threadFunction(Data_Manager*, qintptr);
+    void threadFunction(Data_Manager*, qintptr);
 
 protected:
     void incomingConnection(qintptr) override;
