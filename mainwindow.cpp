@@ -50,19 +50,25 @@ MainWindow::MainWindow(QWidget *parent, Data_Manager* dM) :
     connect(dataManager, SIGNAL(isUpdated()), this, SLOT(updateAvatarVisible()));
 
     // Connections for GUI receiver side
-    connect(dataManager, SIGNAL(metadataStageEND(qint64, QString)), this, SLOT(messageBoxYES_NO(qint64, QString)));
+    connect(dataManager, SIGNAL(metadataStageEND(qint64, QString, QUuid, QString)), this, SLOT(messageBoxYES_NO(qint64, QString, QUuid, QString)));
+    connect(dataManager, SIGNAL(messageBoxYES()), this, SLOT(addReceiverProgBar()));
+
+    receiverWindow = new WindowProgressBar(this, dataManager);
+    receiverWindow->setWindowTitle("Receiving file");
+
     ///dataManager->addOnlineUser(h1);
     ///dataManager->deleteOnlineUser(h1);
 
 }
 
-void MainWindow::messageBoxYES_NO(qint64 fileSize, QString fileName){
+void MainWindow::messageBoxYES_NO(qint64 fileSize, QString fileName, QUuid id, QString senderName){
     QMessageBox::StandardButton reply;
     reply = QMessageBox::question(this, "Incoming file", "Do you want to accept file '"
                                   + fileName + "' of size " + fileSize + "bytes?", QMessageBox::Yes|QMessageBox::No);
 
     if(reply == QMessageBox::Yes){
         emit dataManager->messageBoxYes();
+        addReceiverProgBar(id, senderName);
     }
     else if(reply == QMessageBox::No){
 
@@ -75,8 +81,9 @@ void MainWindow::onShareButton(){
 
     if(!toSendUsers.empty()){
         sendingWindow = new WindowProgressBar(this, dataManager);
+        sendingWindow->setWindowTitle("Sending File");
 
-        sendingWindow->addAllProgressBars(toSendUsers);
+        sendingWindow->addProgressBars_SendTo(toSendUsers);
         //sendingWindow->addAllProgressBars(toSendUsers);
 
         sendingWindow->show();
@@ -85,6 +92,16 @@ void MainWindow::onShareButton(){
         // SEND FILE
         emit dataManager->sendFile_SIGNAL();  //signal in datamanager that connects with the client
     }
+}
+
+void MainWindow::addReceiverProgBar(QUuid id, QString senderName){
+
+    receiverWindow->addProgessBars_ReceivingFrom(id, senderName);
+
+    if(!receiverWindow->isVisible()){
+        receiverWindow->show();
+    }
+
 }
 
 void MainWindow::DEBUG_addToDataManager(){

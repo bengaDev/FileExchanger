@@ -67,15 +67,17 @@ void ReceiverWorker::metadataStageSTART(){
     else if(sentData.startsWith("incoming file from ")){
         fileSize = msgSize;
 
+        QString senderName;
         QString data(sentData);
         data.remove("incoming file from {");
         data.remove("}");
         uniqueID = data;
 
         in >> fileName;
+        in >> senderName;
 
         // END OF THIS PHASE (READING OF METADATA)
-        emit dm->metadataStageEND(fileSize, fileName);
+        emit dm->metadataStageEND(fileSize, fileName, QUuid(uniqueID), senderName);
     }
 
 }
@@ -90,6 +92,8 @@ void ReceiverWorker::dataStageSTART(){
     qDebug() << "-------------File name is: " << fileName;
 
     file.open(QIODevice::WriteOnly);
+
+    emit dm->setProgBarMaximum_RECEIVER(uniqueID, fileSize);
 
     // Keep reading from 'tcpSocket' untill all the bytes have been received
     while(receivedBytes < fileSize){
@@ -106,10 +110,14 @@ void ReceiverWorker::dataStageSTART(){
         }  //64Kb are arrived now...
         receivedBytes += tcpSocket->bytesAvailable();
 
+        emit dm->setProgBarValue_RECEIVER(uniqueID, receivedBytes);
+
         fileBuffer = tcpSocket->readAll();
 
         file.write(fileBuffer);
     }
+
+    emit dm->setProgBarValue_RECEIVER(uniqueID, receivedBytes);
 
     file.write(fileBuffer);
 

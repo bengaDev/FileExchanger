@@ -15,12 +15,13 @@ WindowProgressBar::WindowProgressBar(QWidget *parent, Data_Manager *dm) :
     //connect(this, SIGNAL(destroyed(QObject*)), dm, SLOT(DEBUG_trySlot(QObject*)));
 
 
-    connect(dm, SIGNAL(setProgBarMaximum_SIGNAL(QUuid, qint64)), this, SLOT(onSetMaximumProgBar(QUuid, qint64)), Qt::QueuedConnection);
-    connect(dm, SIGNAL(setProgBarValue_SIGNAL(QUuid, qint64)), this, SLOT(onSetValueProgBar(QUuid, qint64)), Qt::QueuedConnection);
-
 }
 
-void WindowProgressBar::addAllProgressBars(std::list<Host> toSendUsers){
+void WindowProgressBar::addProgressBars_SendTo(std::list<Host> toSendUsers){
+
+    // It connects these signals only if in a "sender window"
+    connect(dm, SIGNAL(setProgBarMaximum_SENDER(QUuid, qint64)), this, SLOT(onSetMaximumProgBar(QUuid, qint64)), Qt::QueuedConnection);
+    connect(dm, SIGNAL(setProgBarValue_SENDER(QUuid, qint64)), this, SLOT(onSetValueProgBar(QUuid, qint64)), Qt::QueuedConnection);
 
     for(std::list<Host>::iterator host = toSendUsers.begin(); host != toSendUsers.end(); host++){
 
@@ -49,6 +50,39 @@ void WindowProgressBar::addAllProgressBars(std::list<Host> toSendUsers){
 
     displayList();
 
+
+}
+
+void WindowProgressBar::addProgessBars_ReceivingFrom(QUuid id, QString name){
+
+    // It connects these signals only if in a "receiver window"
+    connect(dm, SIGNAL(setProgBarMaximum_RECEIVER(QUuid, qint64)), this, SLOT(onSetMaximumProgBar(QUuid, qint64)));
+    connect(dm, SIGNAL(setProgBarValue_RECEIVER(QUuid, qint64)), this, SLOT(onSetValueProgBar(QUuid, qint64)));
+
+    QHBoxLayout *hLayout = new QHBoxLayout();
+    QVBoxLayout *internalVLayout = new QVBoxLayout();
+
+
+    QWidget *container = new QWidget(this);
+    container->setLayout(hLayout);
+
+    QWidget *progBar_and_label = new QWidget(container);
+    progBar_and_label->setLayout(internalVLayout);
+
+    QProgressBar *progressBar = new QProgressBar(container);
+    QLabel *progBarLabel = new QLabel("Receiving from " + name + "...", container);
+    progressBar->setFixedWidth(400);
+
+    internalVLayout->addWidget(progressBar);
+    internalVLayout->addWidget(progBarLabel);
+    internalVLayout->addStretch(1);
+
+    hLayout->addWidget(progBar_and_label);
+
+    progressBarMap.insert(id, container);
+
+
+    displayList();
 
 }
 

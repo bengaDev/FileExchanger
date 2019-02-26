@@ -58,7 +58,7 @@ void Client::hello(){
         qDebug() << "Client: Broadcasting basic info -- UDP";
 
 
-        if(udpSocket.writeDatagram(datagram, QHostAddress("192.168.1.255"), SERVER_PORT) == -1){
+        if(udpSocket.writeDatagram(datagram, QHostAddress::Broadcast/*("192.168.1.255")*/, SERVER_PORT) == -1){
 
             qDebug() << "Client: Could not send broadcast basic info -- UDP";
         } else {
@@ -178,6 +178,7 @@ void Client::sendFileToUser(Host h){
     out << TotalBytes; // Size of file
     out << "incoming file from " + dm->localHost->getUniqueID().toByteArray();
     out << dm->getFileName();
+    out << dm->localHost->getName();
 
     // Send first packet: metadata
     if(tcpSocket.write(firstPacketPayload) < firstPacketPayload.size()){
@@ -191,7 +192,7 @@ void Client::sendFileToUser(Host h){
 
 
     // Set Max Value in corresponding ProgressBar of host 'h'
-    emit dm->setProgBarMaximum_SIGNAL(h.getUniqueID(), TotalBytes);
+    emit dm->setProgBarMaximum_SENDER(h.getUniqueID(), TotalBytes);
 
     ////// WAIT FOR CLIENT TO ACCEPT REQUEST!//////
     //read on tcp socket -> receive ok from client
@@ -237,7 +238,7 @@ void Client::sendingFile(QTcpSocket* tcpSocket, QFile* file, Host h){
         }
 
         // Update progress bar
-        emit dm->setProgBarValue_SIGNAL(h.getUniqueID(), bytesWritten);
+        emit dm->setProgBarValue_SENDER(h.getUniqueID(), bytesWritten);
     }
     qDebug() << "--------------BytesWritten: " << bytesWritten ;
 
