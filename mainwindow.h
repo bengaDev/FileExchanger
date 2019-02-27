@@ -43,6 +43,7 @@ private slots:
     void onShareButton();
     void onRefreshButton();
     void messageBoxYES_NO(qint64, QString);
+    void onQuitAction();
 
 private:
     Ui::MainWindow *ui;

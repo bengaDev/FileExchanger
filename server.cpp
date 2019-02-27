@@ -67,7 +67,12 @@ void Server::readBroadcastDatagram(){
             // Now basic info is acquired. I need to check if the received datagram is from a visible
             // host and if it is not already present in the 'onlineUsers' list.
             // If these two requirements are satisfied -> send me your avatar message
-            if(visibility == "VISIBLE" && dm->isPresentInOnlineUsers(QUuid(uniqueID)) == false){
+            if(visibility == "VISIBLE" && dm->isPresentInOnlineUsers(QUuid(uniqueID)) == true){
+                // refresh last seen time
+               dm->setHostLastSeen(QUuid(uniqueID), receivedTime);
+            }else if(visibility == "NOTVISIBLE" && dm->isPresentInOnlineUsers(QUuid(uniqueID)) == true){
+                dm->deleteOnlineUser(QUuid(uniqueID));
+            }else if(visibility == "VISIBLE" && dm->isPresentInOnlineUsers(QUuid(uniqueID)) == false){
                 // I want the rest of the data - Server responds in UDP
                 qDebug() << "Server: requesting for more info -- UDP";
                 Host h(true, name);
@@ -80,10 +85,7 @@ void Server::readBroadcastDatagram(){
                 //QUdpSocket udpSocket_2;
                 udpSocket->writeDatagram(moreInfoDatagram, senderIP, BROADCAST_PORT);
                 udpSocket->waitForBytesWritten(5000);
-            }  //add else not visible....
-
-            // refresh last seen time
-            dm->setHostLastSeen(QUuid(uniqueID), receivedTime);
+            }
 
         } else {
             qDebug() << "Server: " << "Not a valid message!";

@@ -213,6 +213,7 @@ void MainWindow::createTrayIcon(){
     connect(restoreAction, &QAction::triggered, this, &QMainWindow::showNormal);
 
     quitAction = new QAction(tr("&Quit"), this);
+    connect(quitAction, &QAction::triggered, this, &MainWindow::onQuitAction);
     connect(quitAction, &QAction::triggered, this, &QCoreApplication::quit);
     // -------------------------------------------------------------------------------
 
@@ -228,6 +229,10 @@ void MainWindow::createTrayIcon(){
     trayIcon->setIcon(QIcon(":/Icon_IMG/shareIMG.png"));
     trayIcon->setVisible(true);
     // -------------------------------------------------------------------------------
+}
+
+void MainWindow::onQuitAction(){
+    emit dataManager->quittingApplication();
 }
 
 MainWindow::~MainWindow()

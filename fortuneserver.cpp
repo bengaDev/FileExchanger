@@ -17,7 +17,7 @@ void FortuneServer::incomingConnection(qintptr socketDescriptor){
     connect(receiverThread, SIGNAL (started()), receiver, SLOT (metadataStageSTART()));
     connect(receiver, SIGNAL (closeThread()), receiverThread, SLOT (quit()));
     connect(receiver, SIGNAL (closeThread()), receiver, SLOT (deleteLater()));
-    connect(receiverThread, SIGNAL (closeThread()), receiverThread, SLOT (deleteLater()));
+    connect(receiverThread, SIGNAL (finished()), receiverThread, SLOT (deleteLater()));
     receiverThread->start();
     //QtConcurrent::run(this, &FortuneServer::threadFunction, dm, socketDescriptor);
 }

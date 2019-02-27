@@ -20,10 +20,22 @@ void Data_Manager::addOnlineUser(Host newHost){
     emit isUpdated();
 }
 
-void Data_Manager::deleteOnlineUser(Host hostToDelete){
+void Data_Manager::deleteOnlineUser(QUuid hostID){
     // Comparison is done with the unique ID (operator overload == in 'Host' class)
-    onlineUsers.remove(hostToDelete);
+
+    qDebug() << "DELETE entered....";
+
+    std::list<Host>::iterator it;
+
+    for(it = onlineUsers.begin(); it != onlineUsers.end(); it++){
+
+        if(it->getUniqueID() == hostID)
+            it = onlineUsers.erase(it);
+
+    }
+
     emit isUpdated();
+
 }
 
 
@@ -109,15 +121,22 @@ void Data_Manager::refreshOnlineUsers(){
     time_t currentTime = time(nullptr);
 
     qDebug() << "TIME entered....";
+
     std::list<Host>::iterator it;
+    bool isModified = false;
+
     for(it = onlineUsers.begin(); it != onlineUsers.end(); it++){
         qDebug() << "TIME in refresh online = " << difftime(currentTime, it->getLastSeen());
 
         if(difftime(currentTime, it->getLastSeen()) > refreshTime+5){
-            deleteOnlineUser(*it);
-            it++;
+            //deleteOnlineUser(*it);
+            it = onlineUsers.erase(it);
+            isModified = true;
         }
     }
+
+    if(isModified)
+        emit isUpdated();
 }
 
 uint Data_Manager::getRefreshTime(){

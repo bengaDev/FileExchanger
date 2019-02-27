@@ -23,6 +23,8 @@ public slots:
     void on_UdpReceive();
     void sendFile();
 
+    void onQuittingApplication();
+
 
 private:
     Data_Manager *dm = nullptr;

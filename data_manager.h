@@ -19,7 +19,7 @@ public:
     Data_Manager(QString localHostName, QString fileName);
     Host *localHost;
     void addOnlineUser(Host newHost);
-    void deleteOnlineUser(Host newHost);
+    void deleteOnlineUser(QUuid hostID);
     bool isPresentInOnlineUsers(QUuid);
     void addQueueNextOnlineUsers(Host);
     void setAvatarOfNextOnlineUser(QPixmap, QUuid);
@@ -42,6 +42,9 @@ signals:
     void metadataStageEND(qint64, QString);
     void messageBoxYes();
 
+    // Signal for Closing application
+    void quittingApplication();
+
 public slots:
     void addToSendUsers(QUuid uniqueID);
     void deleteToSendUsers(QUuid uniqueID);
@@ -53,7 +56,7 @@ private:
     std::list<Host> onlineUsers; // le liste devono avere un lock?
     std::list<Host> toSend;
     std::list<Host> queueNextOnlineUsers;
-    uint refreshTime = 10;
+    uint refreshTime = 20;
 
     QMutex mutex;
     //std::string file_path;
