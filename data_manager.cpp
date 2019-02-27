@@ -109,12 +109,14 @@ void Data_Manager::refreshOnlineUsers(){
     time_t currentTime = time(nullptr);
 
     qDebug() << "TIME entered....";
-    for(Host h : onlineUsers){
-        qDebug() << "TIME in refresh online = " << difftime(currentTime, h.getLastSeen());
-        qDebug() << "TIME in refresh online2 = " << difftime(currentTime, onlineUsers.back().getLastSeen());
+    std::list<Host>::iterator it;
+    for(it = onlineUsers.begin(); it != onlineUsers.end(); it++){
+        qDebug() << "TIME in refresh online = " << difftime(currentTime, it->getLastSeen());
 
-        if(difftime(currentTime, h.getLastSeen()) > 0) //refreshTime+10)
-            deleteOnlineUser(h);
+        if(difftime(currentTime, it->getLastSeen()) > refreshTime+5){
+            deleteOnlineUser(*it);
+            it++;
+        }
     }
 }
 
