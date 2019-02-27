@@ -1,6 +1,7 @@
 #ifndef HOST_H
 #define HOST_H
 #include <string>
+#include <ctime>
 #include <QPixmap>
 #include <QUuid>
 #include <QBrush>
@@ -22,6 +23,8 @@ public:
     bool operator==(Host h);
     void setIP(QHostAddress);
     QHostAddress getIP();
+    void setLastSeen(time_t time);
+    time_t getLastSeen();
 
     QUuid uniqueID; // TO PUT IN PRIVATE IN FINAL VERSION ----
 
@@ -30,7 +33,7 @@ private:
     QString name;
     QPixmap* avatar;
     QHostAddress ipAddr;
-
+    time_t lastSeen;
     QPixmap maskPixmap(QPixmap);
 
 

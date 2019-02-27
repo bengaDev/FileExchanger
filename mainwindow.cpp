@@ -45,6 +45,7 @@ MainWindow::MainWindow(QWidget *parent, Data_Manager* dM) :
     // Temp. connections just to simulate server updates
     connect(ui->ShareBtn, SIGNAL(clicked()), this, SLOT(onShareButton()));
     connect(ui->BackBtn, SIGNAL(clicked()), this, SLOT(DEBUG_addToDataManager()));
+    connect(ui->RefreshBtn,SIGNAL(clicked()), this, SLOT(onRefreshButton()));
 
     // When a list in dataManager is updated, it triggers this SLOT, which will update the GUI
     connect(dataManager, SIGNAL(isUpdated()), this, SLOT(updateAvatarVisible()));
@@ -85,6 +86,10 @@ void MainWindow::onShareButton(){
         // SEND FILE
         emit dataManager->sendFile_SIGNAL();  //signal in datamanager that connects with the client
     }
+}
+
+void MainWindow::onRefreshButton(){
+    dataManager->refreshOnlineUsers();
 }
 
 void MainWindow::DEBUG_addToDataManager(){

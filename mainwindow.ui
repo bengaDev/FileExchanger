@@ -25,8 +25,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>677</width>
-         <height>217</height>
+         <width>681</width>
+         <height>228</height>
         </rect>
        </property>
       </widget>
@@ -101,6 +101,13 @@ border: 5px solid blue;
        </widget>
       </item>
       <item>
+       <widget class="QPushButton" name="RefreshBtn">
+        <property name="text">
+         <string>Refresh</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="ShareBtn">
         <property name="styleSheet">
          <string notr="true"/>
@@ -120,7 +127,7 @@ border: 5px solid blue;
      <x>0</x>
      <y>0</y>
      <width>701</width>
-     <height>26</height>
+     <height>20</height>
     </rect>
    </property>
   </widget>

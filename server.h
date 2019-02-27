@@ -8,6 +8,8 @@
 #include <QUdpSocket>
 #include <QtConcurrent/QtConcurrent>
 #include <QString>
+#include <ctime>
+#include <list>
 #include "data_manager.h"
 #include "fortuneserver.h"
 
@@ -39,6 +41,8 @@ public slots:
     //void readTcpData();
 
 private:
+    static void readTcpData(qintptr);
+
     QTcpServer *tcpServer;
     QUdpSocket *udpSocket;
     QTcpSocket *tcpSocket, *tcpSocketAvatar;
@@ -46,8 +50,6 @@ private:
     quint16 port = SERVER_PORT; //use this port or example
     Data_Manager *dm = nullptr;
     int count = 0;
-
-    static void readTcpData(qintptr);
 
 protected:
     //void incomingConnection(qintptr socketDescriptor) override;

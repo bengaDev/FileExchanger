@@ -48,7 +48,7 @@ Client::Client(Data_Manager *dm, QObject *parent) :
 
 void Client::hello(){
     qDebug() << "Client: inizialization...";
-    uint refreshTime = 10;
+    uint refreshTime = dm->getRefreshTime();
     QUdpSocket udpSocket;
 
     while(atomicLoopFlag == 1){
@@ -66,7 +66,25 @@ void Client::hello(){
 
         }
 
+        //Refresh datamanager
+        dm->refreshOnlineUsers();
+
         QThread::sleep(refreshTime);
+
+    }
+
+    // when deleting client annunce visible = false
+    QByteArray datagram = "HOST Basic Info:" + dm->localHost->getUniqueID().toByteArray()
+            + "_" + dm->localHost->getName().toUtf8() + "_" + QString("NOTVISIBLE").toUtf8();
+    qDebug() << "=======================================================\n";
+    qDebug() << "Client: Sendig last message -- UDP";
+
+
+    if(udpSocket.writeDatagram(datagram, QHostAddress("192.168.1.255"), SERVER_PORT) == -1){
+
+        qDebug() << "Client: Could not send last message -- UDP";
+    } else {
+        qDebug() << "Client: Last message sended -- UDP" << udpSocket.state();
 
     }
 }

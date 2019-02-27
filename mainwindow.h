@@ -41,6 +41,7 @@ private slots:
     void addUuidToSend_SLOT(QUuid);
     void deleteUuidToSend_SLOT(QUuid);
     void onShareButton();
+    void onRefreshButton();
     void messageBoxYES_NO(qint64, QString);
 
 private:

@@ -28,6 +28,9 @@ public:
     std::list<Host> getToSendUsers();
     QFile* getFileToSend();
     QString getFileName();
+    void refreshOnlineUsers();
+    uint getRefreshTime();
+    void setHostLastSeen(QUuid uniqueID, time_t time);
 
 signals:
     void isUpdated();
@@ -50,6 +53,7 @@ private:
     std::list<Host> onlineUsers; // le liste devono avere un lock?
     std::list<Host> toSend;
     std::list<Host> queueNextOnlineUsers;
+    uint refreshTime = 10;
 
     QMutex mutex;
     //std::string file_path;

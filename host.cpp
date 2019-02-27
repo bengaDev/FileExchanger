@@ -6,6 +6,7 @@ Host::Host(bool visible, QString name)
 {
     this->visible = visible;
     this->name = name;
+    lastSeen = time(nullptr);
     //avatar = new QPixmap(maskPixmap(QPixmap("C:/Users/Benjamin/Desktop/Poli/Prog_SISTEMA/PROGETTO/PDS_fileExchanger/Icon_IMG/avatar_4.png")));
     //avatar = new QPixmap(maskPixmap(QPixmap("./../PDS_fileExchanger/Icon_IMG/avatar_4.png")));
     //QString a(":\\Icon_IMG\\avatar_2.png");
@@ -53,6 +54,14 @@ void Host::setIP(QHostAddress ip){
 
 QHostAddress Host::getIP(){
     return ipAddr;
+}
+
+void Host::setLastSeen(time_t time){
+    lastSeen = time;
+}
+
+time_t Host::getLastSeen(){
+    return lastSeen;
 }
 
 QPixmap Host::maskPixmap(QPixmap pm){

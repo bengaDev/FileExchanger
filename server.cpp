@@ -37,6 +37,7 @@ void Server::readBroadcastDatagram(){
     QHostAddress senderIP;
     QString datagramString;
     QStringList datagramTokens;
+    time_t receivedTime = time(nullptr);
 
     QString uniqueID, name, visibility;
 
@@ -68,10 +69,11 @@ void Server::readBroadcastDatagram(){
             // If these two requirements are satisfied -> send me your avatar message
             if(visibility == "VISIBLE" && dm->isPresentInOnlineUsers(QUuid(uniqueID)) == false){
                 // I want the rest of the data - Server responds in UDP
-                qDebug() << "Server: request for more info -- UDP";
+                qDebug() << "Server: requesting for more info -- UDP";
                 Host h(true, name);
                 h.setUniqueID(uniqueID);
                 h.setIP(senderIP);
+                h.setLastSeen(receivedTime);
                 dm->addQueueNextOnlineUsers(h);  //queue without avatar
 
                 QByteArray moreInfoDatagram = "SERVER REQUEST more info";
@@ -79,6 +81,9 @@ void Server::readBroadcastDatagram(){
                 udpSocket->writeDatagram(moreInfoDatagram, senderIP, BROADCAST_PORT);
                 udpSocket->waitForBytesWritten(5000);
             }  //add else not visible....
+
+            // refresh last seen time
+            dm->setHostLastSeen(QUuid(uniqueID), receivedTime);
 
         } else {
             qDebug() << "Server: " << "Not a valid message!";

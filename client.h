@@ -26,7 +26,6 @@ public slots:
 
 private:
     Data_Manager *dm = nullptr;
-    uint refreshTime = 10;
     QTcpSocket *tcpSocket;
     QUdpSocket *udpSocket;
     QThread *broadcastThread;

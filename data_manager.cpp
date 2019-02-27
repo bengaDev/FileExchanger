@@ -105,6 +105,30 @@ QString Data_Manager::getFileName(){
     return fileName;
 }
 
+void Data_Manager::refreshOnlineUsers(){
+    time_t currentTime = time(nullptr);
+
+    qDebug() << "TIME entered....";
+    for(Host h : onlineUsers){
+        qDebug() << "TIME in refresh online = " << difftime(currentTime, h.getLastSeen());
+        qDebug() << "TIME in refresh online2 = " << difftime(currentTime, onlineUsers.back().getLastSeen());
+
+        if(difftime(currentTime, h.getLastSeen()) > 0) //refreshTime+10)
+            deleteOnlineUser(h);
+    }
+}
+
+uint Data_Manager::getRefreshTime(){
+    return refreshTime;
+}
+
+void Data_Manager::setHostLastSeen(QUuid uniqueID, time_t time){
+    for(Host &tmp : onlineUsers){
+        if(tmp.getUniqueID() == uniqueID)
+            tmp.setLastSeen(time);
+    }
+}
+
 void Data_Manager::DEBUG_clearOnlineUsers(){
     onlineUsers.clear();
     emit isUpdated();
