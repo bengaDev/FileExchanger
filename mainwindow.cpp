@@ -51,7 +51,6 @@ MainWindow::MainWindow(QWidget *parent, Data_Manager* dM) :
 
     // Connections for GUI receiver side
     connect(dataManager, SIGNAL(metadataStageEND(qint64, QString, QUuid, QString)), this, SLOT(messageBoxYES_NO(qint64, QString, QUuid, QString)));
-    connect(dataManager, SIGNAL(messageBoxYES()), this, SLOT(addReceiverProgBar()));
 
     receiverWindow = new WindowProgressBar(this, dataManager);
     receiverWindow->setWindowTitle("Receiving file");

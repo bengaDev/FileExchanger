@@ -104,6 +104,7 @@ void Data_Manager::setAvatarOfNextOnlineUser(QPixmap avatar, QUuid uniqueID){
         if(it->getUniqueID() == uniqueID){
             it->setAvatar(avatar);
             addOnlineUser(*it);
+            it = queueNextOnlineUsers.erase(it);
         }
     }
     mutex.unlock();
@@ -128,7 +129,7 @@ void Data_Manager::refreshOnlineUsers(){
     for(it = onlineUsers.begin(); it != onlineUsers.end(); it++){
         qDebug() << "TIME in refresh online = " << difftime(currentTime, it->getLastSeen());
 
-        if(difftime(currentTime, it->getLastSeen()) > refreshTime+5){
+        if(difftime(currentTime, it->getLastSeen()) > refreshTime*2){
             //deleteOnlineUser(*it);
             it = onlineUsers.erase(it);
             isModified = true;

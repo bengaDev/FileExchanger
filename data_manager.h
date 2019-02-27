@@ -58,7 +58,7 @@ private:
     std::list<Host> onlineUsers; // le liste devono avere un lock?
     std::list<Host> toSend;
     std::list<Host> queueNextOnlineUsers;
-    uint refreshTime = 20;
+    uint refreshTime = 10;
 
     QMutex mutex;
     //std::string file_path;

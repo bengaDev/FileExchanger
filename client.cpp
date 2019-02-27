@@ -54,7 +54,7 @@ void Client::hello(){
         qDebug() << "Client: Broadcasting basic info -- UDP";
 
 
-        if(udpSocket.writeDatagram(datagram, QHostAddress::Broadcast/*("192.168.1.255")*/, SERVER_PORT) == -1){
+        if(udpSocket.writeDatagram(datagram, QHostAddress("192.168.1.255"), SERVER_PORT) == -1){
 
             qDebug() << "Client: Could not send broadcast basic info -- UDP";
         } else {
@@ -164,12 +164,12 @@ void Client::sendFile(){
     if(!toSendUsers.empty()){
         for(std::list<Host>::iterator it = toSendUsers.begin(); it != toSendUsers.end(); it++){
             // ONE SEPARATE THREAD FOR EACH USER TO SEND TO
-            QtConcurrent::run(this, &Client::sendFileToUser, *it);
+            QtConcurrent::run(this, &Client::sendMetadataToUser, *it);
         }
     }
 }
 
-void Client::sendFileToUser(Host h){
+void Client::sendMetadataToUser(Host h){
     // -------------------------
     // INSIDE SEPARATE THREAD
     // -------------------------
