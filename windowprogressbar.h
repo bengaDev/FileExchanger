@@ -22,11 +22,14 @@ public:
     explicit WindowProgressBar(QWidget *parent = nullptr, Data_Manager* dm = nullptr);
     ~WindowProgressBar();
 
-    void addAllProgressBars(std::list<Host> toSendUsers);
+    void addProgressBars_SendTo(std::list<Host> toSendUsers);
+    void addProgessBars_ReceivingFrom(QUuid, QString);
 
 private slots:
     void onSetMaximumProgBar(QUuid, qint64);
     void onSetValueProgBar(QUuid, qint64);
+    //void onSetMaximumProgBar_RECEIVER(QUuid, qint64);
+    //void onSetValueProgBar_RECEIVER(QUuid, qint64);
     void DEBUG_destroyedSlot();
 
 private:

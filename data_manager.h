@@ -35,11 +35,13 @@ public:
 signals:
     void isUpdated();
     void sendFile_SIGNAL();
-    void setProgBarMaximum_SIGNAL(QUuid, qint64);
-    void setProgBarValue_SIGNAL(QUuid, qint64);
+    void setProgBarMaximum_SENDER(QUuid, qint64);
+    void setProgBarValue_SENDER(QUuid, qint64);
+    void setProgBarMaximum_RECEIVER(QUuid, qint64);
+    void setProgBarValue_RECEIVER(QUuid, qint64);
 
     // Signals for GUI-ReceiverWorker communication
-    void metadataStageEND(qint64, QString);
+    void metadataStageEND(qint64, QString, QUuid, QString);
     void messageBoxYes();
 
     // Signal for Closing application

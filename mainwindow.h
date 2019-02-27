@@ -41,9 +41,10 @@ private slots:
     void addUuidToSend_SLOT(QUuid);
     void deleteUuidToSend_SLOT(QUuid);
     void onShareButton();
-    void onRefreshButton();
-    void messageBoxYES_NO(qint64, QString);
+
     void onQuitAction();
+
+    void messageBoxYES_NO(qint64, QString, QUuid, QString);
 
 private:
     Ui::MainWindow *ui;
@@ -52,6 +53,7 @@ private:
     ContainerGUI* fromHost_to_Container(Host h);
     QList<ContainerGUI*> *onlineUsersGUI;
     QString avatarStyleSheet();
+    void addReceiverProgBar(QUuid, QString);
 
 
     Data_Manager* dataManager;
@@ -68,6 +70,7 @@ private:
     FlowLayout *flowLayout_ScrollArea;
 
     WindowProgressBar *sendingWindow;
+    WindowProgressBar *receiverWindow;
 };
 
 #endif // MAINWINDOW_H

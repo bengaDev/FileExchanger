@@ -29,7 +29,7 @@ private:
 
     qint64 msgSize = -1;
     qint64 fileSize = -1;
-    qint64 receivedBytes = -1;
+    qint64 receivedBytes = 0;
     QString fileName;
     QString uniqueID;
 
