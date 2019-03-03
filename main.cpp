@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
     //QString fileName(":Icon_IMG/avatar_2.png");
 
     for (int i = 1; i < argc; ++i){
-        //WILL HAVE TO BE IMPLEMENTED IN FINAL VERSION
+        //TO BE IMPLEMENTED IN FINAL VERSION
         //fileName = argv[i];
     }
 

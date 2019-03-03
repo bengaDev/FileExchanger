@@ -8,7 +8,7 @@ ReceiverWorker::ReceiverWorker(Data_Manager* dm, qintptr socketDescriptor)
 
     if (!tcpSocket->setSocketDescriptor(socketDescriptor)) {
         //emit error(tcpSocket.error());
-        qDebug() << "Server: error in opening socket thorugh 'socketDescriptor' - Threaded";
+        qDebug() << "ReceiverWorker: error in opening socket thorugh 'socketDescriptor' - Threaded";
         return;
     }
 
@@ -16,6 +16,7 @@ ReceiverWorker::ReceiverWorker(Data_Manager* dm, qintptr socketDescriptor)
 }
 
 void ReceiverWorker::metadataStageSTART(){
+    qDebug() << "ReceiverWorker with thread: " << QThread::currentThreadId();
 
     tcpSocket->waitForReadyRead(5000);
 
@@ -37,7 +38,7 @@ void ReceiverWorker::metadataStageSTART(){
             }
         }
 
-        qDebug() << "Fortune Server: Avatar received (separate thread)";
+        qDebug() << "RecaiverWorker: Avatar received ( separate thread )";
         qDebug() << "Received data size: " << sentData.size();
 
         in >> avatar;

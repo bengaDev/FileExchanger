@@ -21,7 +21,7 @@ Client::Client(Data_Manager *dm, QObject *parent) :
     qDebug() << "Client: " << dm->localHost->getUniqueID();
 
     udpSocket = new QUdpSocket(this);
-    tcpSocket = new QTcpSocket(this);
+    //tcpSocket = new QTcpSocket(this);
 
     if(!udpSocket->bind(BROADCAST_PORT, QUdpSocket::ShareAddress)){
         // UDP listener of server could not start
@@ -164,7 +164,16 @@ void Client::sendFile(){
     if(!toSendUsers.empty()){
         for(std::list<Host>::iterator it = toSendUsers.begin(); it != toSendUsers.end(); it++){
             // ONE SEPARATE THREAD FOR EACH USER TO SEND TO
-            QtConcurrent::run(this, &Client::sendMetadataToUser, *it);
+            //QtConcurrent::run(this, &Client::sendMetadataToUser, *it);
+
+            ///CREATES A NEW SENDER WORKER FOR EACH USER///
+            QThread *senderThread = new QThread;
+            SenderWorker *senderWorker = new SenderWorker(dm, &(*it));
+            senderWorker->moveToThread(senderThread);
+
+            //add connects to manage thread closing
+
+            senderThread->start();
         }
     }
 }
@@ -281,27 +290,3 @@ void Client::onQuittingApplication(){
 Client::~Client(){
     atomicLoopFlag = 0;
 }
-
-// noreturn can be omitted, but is better for compiler optimization
-/*void Client::hello(){
-    qDebug() << "Client: inizialization...";
-
-    while(true){
-
-        QThread::sleep(refreshTime);
-
-        tcpSocket = new QTcpSocket(this);
-        tcpSocket->connectToHost(QHostAddress::LocalHost, 1515);
-
-        qDebug() << "Client: Connected";
-
-        tcpSocket->write(dm->localHost->getUniqueID().toByteArray()); // add visibility (bool)
-
-        tcpSocket->waitForBytesWritten(5000);
-
-        qDebug() << "Client: closing connection";
-        tcpSocket->close();
-
-
-    }
-}*/

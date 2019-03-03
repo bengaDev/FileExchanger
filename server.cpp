@@ -20,7 +20,7 @@ Server::Server(Data_Manager *dm, QObject *parent) :
 
 
     // ======== TCP CONNECTIONS ========
-    tcpServer = new QTcpServer(this);
+    //tcpServer = new QTcpServer(this);
 
 
     ///connect(tcpServer, SIGNAL(newConnection()), this, SLOT(newConnectionSLOT()));
@@ -93,6 +93,7 @@ void Server::readBroadcastDatagram(){
     }
 }
 
+/*
 void Server::newConnectionSLOT() //action performed each timen a new connection arrives
 {
     //QTcpSocket *socket = tcpServer->nextPendingConnection();
@@ -128,4 +129,4 @@ void Server::readTcpData(qintptr socketDescriptor){
     }
 
 }
-
+*/

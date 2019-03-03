@@ -2,6 +2,7 @@
 #define RECEIVERWORKER_H
 
 #include <QObject>
+#include <QThread>
 #include <QTcpSocket>
 #include "data_manager.h"
 

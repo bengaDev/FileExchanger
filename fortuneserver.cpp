@@ -11,17 +11,19 @@ FortuneServer::FortuneServer(Data_Manager *dm, QObject *parent)
 void FortuneServer::incomingConnection(qintptr socketDescriptor){
     qDebug() << "Fortune Server: incoming connection (could be avatar or file)";
     QThread *receiverThread = new QThread;
-    ReceiverWorker *receiver = new ReceiverWorker(dm, socketDescriptor);
-    receiver->moveToThread(receiverThread);
+    ReceiverWorker *receiverWorker = new ReceiverWorker(dm, socketDescriptor);
+    receiverWorker->moveToThread(receiverThread);
 
-    connect(receiverThread, SIGNAL (started()), receiver, SLOT (metadataStageSTART()));
-    connect(receiver, SIGNAL (closeThread()), receiverThread, SLOT (quit()));
-    connect(receiver, SIGNAL (closeThread()), receiver, SLOT (deleteLater()));
+    connect(receiverThread, SIGNAL (started()), receiverWorker, SLOT (metadataStageSTART()));
+    connect(receiverWorker, SIGNAL (closeThread()), receiverThread, SLOT (quit()));
+    connect(receiverWorker, SIGNAL (closeThread()), receiverWorker, SLOT (deleteLater()));
     connect(receiverThread, SIGNAL (finished()), receiverThread, SLOT (deleteLater()));
+
     receiverThread->start();
     //QtConcurrent::run(this, &FortuneServer::threadFunction, dm, socketDescriptor);
 }
 
+// threadFunction moved inside the receiverWorker
 void FortuneServer::threadFunction(Data_Manager* dm, qintptr socketDescriptor){
     QByteArray sentData;
     QPixmap avatar;

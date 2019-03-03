@@ -9,7 +9,8 @@
 #include <QUdpSocket>
 #include <QtConcurrent/QtConcurrent>
 #include <QThread>
-#include <data_manager.h>
+#include "data_manager.h"
+#include "senderworker.h"
 
 
 class Client : public QObject
@@ -28,7 +29,7 @@ public slots:
 
 private:
     Data_Manager *dm = nullptr;
-    QTcpSocket *tcpSocket;
+    //QTcpSocket *tcpSocket;
     QUdpSocket *udpSocket;
     QThread *broadcastThread;
 

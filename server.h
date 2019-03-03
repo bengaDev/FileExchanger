@@ -36,14 +36,14 @@ public:
 signals:
     //void newConnecion(); already present in QTcpServer
 public slots:
-    void newConnectionSLOT(); //to manage signal newConnection from QTcpServer
+    //void newConnectionSLOT(); //to manage signal newConnection from QTcpServer
     void readBroadcastDatagram();
     //void readTcpData();
 
 private:
     static void readTcpData(qintptr);
 
-    QTcpServer *tcpServer;
+    //QTcpServer *tcpServer;
     QUdpSocket *udpSocket;
     QTcpSocket *tcpSocket, *tcpSocketAvatar;
     FortuneServer *fortuneServer;
