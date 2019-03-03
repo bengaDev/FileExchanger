@@ -25,8 +25,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>681</width>
-         <height>228</height>
+         <width>677</width>
+         <height>217</height>
         </rect>
        </property>
       </widget>
@@ -120,9 +120,16 @@ border: 5px solid blue;
      <x>0</x>
      <y>0</y>
      <width>701</width>
-     <height>20</height>
+     <height>26</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuSettings">
+    <property name="title">
+     <string>Settings</string>
+    </property>
+    <addaction name="actionChange_Settings"/>
+   </widget>
+   <addaction name="menuSettings"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -133,6 +140,11 @@ border: 5px solid blue;
    </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionChange_Settings">
+   <property name="text">
+    <string>Change Settings</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>

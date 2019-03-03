@@ -151,6 +151,32 @@ void Data_Manager::setHostLastSeen(QUuid uniqueID, time_t time){
     }
 }
 
+
+void Data_Manager::setLocalHostVisibility(bool visibility){
+
+    localHost->setVisibility(visibility);
+}
+
+void Data_Manager::setLocalHostName(QString name){
+    localHost->setName(name);
+}
+
+void Data_Manager::setReceiveFilesAutom(bool autom){
+    this->receiveFileAutomatically = autom;
+}
+
+bool Data_Manager::getReceiveFilesAutom(){
+    return this->receiveFileAutomatically;
+}
+
+void Data_Manager::setIFDefaultSavingPath(bool defaultSave){
+    this->defaultSavingPath = defaultSave;
+}
+
+bool Data_Manager::getIFDefaultSavingPath(){
+    return this->defaultSavingPath;
+}
+
 void Data_Manager::DEBUG_clearOnlineUsers(){
     onlineUsers.clear();
     emit isUpdated();
