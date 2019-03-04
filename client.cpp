@@ -163,15 +163,21 @@ void Client::sendFile(){
 
     if(!toSendUsers.empty()){
         for(std::list<Host>::iterator it = toSendUsers.begin(); it != toSendUsers.end(); it++){
+            qDebug() << "CLient: starting a new worker";
+
             // ONE SEPARATE THREAD FOR EACH USER TO SEND TO
             //QtConcurrent::run(this, &Client::sendMetadataToUser, *it);
 
             ///CREATES A NEW SENDER WORKER FOR EACH USER///
             QThread *senderThread = new QThread;
-            SenderWorker *senderWorker = new SenderWorker(dm, &(*it));
+            SenderWorker *senderWorker = new SenderWorker(dm, *it);
             senderWorker->moveToThread(senderThread);
 
             //add connects to manage thread closing
+            connect(senderThread, SIGNAL(started()), senderWorker, SLOT(sendMetaData()));
+            connect(senderWorker, SIGNAL(closeThread()), senderThread, SLOT(quit()));
+            connect(senderWorker, SIGNAL(closeThread()), senderThread, SLOT(deleteLater()));
+            connect(senderThread, SIGNAL(finished()), senderWorker, SLOT(deleteLater()));
 
             senderThread->start();
         }

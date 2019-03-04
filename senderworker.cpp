@@ -1,17 +1,17 @@
 #include "senderworker.h"
 
-SenderWorker::SenderWorker(Data_Manager* dm, Host* h)
+SenderWorker::SenderWorker(Data_Manager* dm, Host h)
 {
     this->dm = dm;
     this->h = h;
     tcpSocket = new QTcpSocket(this);
-
-    tcpSocket->connectToHost(h->getIP(), SERVER_PORT);
+    qDebug() << "SenderWorker: unique id =  " << h.getUniqueID() ;
+    tcpSocket->connectToHost(h.getIP(), SERVER_PORT);
     qDebug() << "SenderWorker: socket state = " << tcpSocket->state() << " ( thread id: "
              << QThread::currentThreadId() << " )";
 
     //add connects to send meta-data and file
-
+    connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(checkResponse()));
  /*
     if (!tcpSocket->setSocketDescriptor(socketDescriptor)) {
         //emit error(tcpSocket.error());
@@ -24,6 +24,8 @@ SenderWorker::SenderWorker(Data_Manager* dm, Host* h)
 
 
 void SenderWorker::sendMetaData(){
+    qDebug() << "SenderWorker: sending Meta-Data";
+
     file = dm->getFileToSend();
 
     if(file->open(QIODevice::ReadOnly) == false){
@@ -63,20 +65,25 @@ void SenderWorker::sendMetaData(){
     // se client send ok vado avanti
     // se client send NOT ALLOWED annullo l'invio del file
 
-///TO BE RE-IMPLEMENTED WITH SIGNALS
-/*
-    if(tcpSocket.waitForReadyRead(10000)){
-        QByteArray response = tcpSocket.readAll();
-        if(response == "YES"){
-            sendingFile(&tcpSocket, file, h);
-        }
-    }
-*/
-
 }
 
+void SenderWorker::checkResponse(){
+    QByteArray response;
 
+    response = tcpSocket->readAll();
+    qDebug() << "SenderWorker: received response = " << response;
+
+    if(response == "YES"){
+        sendFile();
+    }else{
+        qDebug() << "SenderWorker: closing connection";
+    }
+}
+
+///called by signal readyRead
 void SenderWorker::sendFile(){
+    qDebug() << "SenderWorker: start sending file";
+
     // Read part of file and fill first 64KB TCP packet
     qint64 bytesWritten = 0;
     QByteArray buffer;
@@ -101,9 +108,13 @@ void SenderWorker::sendFile(){
                 qDebug() << "ERROR";
             }
         }
-
         // Update progress bar
         emit dm->setProgBarValue_SENDER(h.getUniqueID(), bytesWritten);
     }
+    qDebug() << "SenderWorker: file sendend!";
     qDebug() << "--------------BytesWritten: " << bytesWritten ;
+
+    // At this point file is sended, and thread should close.
+    // In order to do this emit signal 'closeThread'
+    emit closeThread();
 }

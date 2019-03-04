@@ -20,7 +20,7 @@ void ReceiverWorker::metadataStageSTART(){
 
     tcpSocket->waitForReadyRead(5000);
 
-    QDataStream in(tcpSocket);
+    QDataStream in(tcpSocket);    
 
     if(tcpSocket->bytesAvailable() && msgSize == -1){
         in >> msgSize;

@@ -15,7 +15,7 @@ public:
 
 signals:
     void closeThread();
-    void dataStageEND();
+    void dataStageEND();// where it is USED????
 
 public slots:
     void metadataStageSTART();

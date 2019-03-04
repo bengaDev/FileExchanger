@@ -11,13 +11,16 @@ class SenderWorker : public QObject
     Q_OBJECT
 public:
     //explicit SenderWorker(QObject *parent = nullptr);
-    SenderWorker(Data_Manager* dm, Host* h);
-    void sendMetaData();
+    SenderWorker(Data_Manager* dm, Host h);
+
     void sendFile();
 
 signals:
+    void closeThread();
 
 public slots:
+    void checkResponse();
+    void sendMetaData();
 
 private:
     Data_Manager* dm;
