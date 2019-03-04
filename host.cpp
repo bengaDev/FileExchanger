@@ -16,6 +16,10 @@ Host::Host(bool visible, QString name)
 
 }
 
+void Host::setVisibility(bool visibility){
+    this->visible = visibility;
+}
+
 bool Host::isVisible()
 {
     return this->visible;
@@ -27,6 +31,10 @@ QPixmap Host::getAvatar(){
 
 QString Host::getName(){
     return name;
+}
+
+void Host::setName(QString name){
+    this->name = name;
 }
 
 void Host::createuniqueID(){

@@ -38,7 +38,8 @@ SOURCES += \
     fortuneserver.cpp \
     windowprogressbar.cpp \
     receiverworker.cpp \
-    senderworker.cpp
+    senderworker.cpp \
+    settingswindow.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -51,11 +52,13 @@ HEADERS += \
     fortuneserver.h \
     windowprogressbar.h \
     receiverworker.h \
-    senderworker.h
+    senderworker.h \
+    settingswindow.h
 
 FORMS += \
         mainwindow.ui \
-    windowprogressbar.ui
+    windowprogressbar.ui \
+    settingswindow.ui
 
 RESOURCES += \
     systray.qrc \

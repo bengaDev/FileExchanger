@@ -19,11 +19,13 @@ signals:
 
 public slots:
     void metadataStageSTART();
+    void pathSelectionSTART(QString);
     void dataStageSTART();
 
 private:
     Data_Manager* dm;
     QTcpSocket* tcpSocket;
+    QFile *file;
 
     QByteArray sentData;
     QPixmap avatar;

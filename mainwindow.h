@@ -5,6 +5,7 @@
 #include "flowlayout.h"
 #include "containergui.h"
 #include "windowprogressbar.h"
+#include "settingswindow.h"
 
 #include <QMainWindow>
 #include <QCloseEvent>
@@ -15,6 +16,7 @@
 #include <QLabel>
 #include <QPainter>
 #include <QMessageBox>
+#include <QFileDialog>
 
 
 namespace Ui {
@@ -46,6 +48,8 @@ private slots:
 
     void messageBoxYES_NO(qint64, QString, QUuid, QString);
 
+    void on_actionChange_Settings_triggered();
+
 private:
     Ui::MainWindow *ui;
     void createTrayIcon();
@@ -71,6 +75,8 @@ private:
 
     WindowProgressBar *sendingWindow;
     WindowProgressBar *receiverWindow;
+
+    SettingsWindow *settingsWindow;
 };
 
 #endif // MAINWINDOW_H

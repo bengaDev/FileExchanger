@@ -61,17 +61,40 @@ MainWindow::MainWindow(QWidget *parent, Data_Manager* dM) :
 }
 
 void MainWindow::messageBoxYES_NO(qint64 fileSize, QString fileName, QUuid id, QString senderName){
-    QMessageBox::StandardButton reply;
-    reply = QMessageBox::question(this, "Incoming file", "Do you want to accept file '"
-                                  + fileName + "' of size " + fileSize + "bytes?", QMessageBox::Yes|QMessageBox::No);
 
-    if(reply == QMessageBox::Yes){
-        emit dataManager->messageBoxYes();
+    QString filePath;
+    if(dataManager->getReceiveFilesAutom() == true){
+        if(dataManager->getIFDefaultSavingPath() == true){
+            emit dataManager->savingPath("./");
+        }
+        else{
+            filePath = QFileDialog::getExistingDirectory(this, tr("Open Directory"), "/home");
+            emit dataManager->savingPath(filePath);
+        }
+        //emit dataManager->messageBoxYes();
         addReceiverProgBar(id, senderName);
     }
-    else if(reply == QMessageBox::No){
+    else {
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(this, "Incoming file", "Do you want to accept file '"
+                                      + fileName + "' of size " + fileSize + "bytes?", QMessageBox::Yes|QMessageBox::No);
 
+        if(reply == QMessageBox::Yes){
+            if(dataManager->getIFDefaultSavingPath() == true){
+                emit dataManager->savingPath("./");
+            }
+            else{
+                filePath = QFileDialog::getExistingDirectory(this, tr("Open Directory"), "/home");
+                emit dataManager->savingPath(filePath);
+            }
+            //emit dataManager->messageBoxYes();
+            addReceiverProgBar(id, senderName);
+        }
+        else if(reply == QMessageBox::No){
+
+        }
     }
+
 }
 
 void MainWindow::onShareButton(){
@@ -245,6 +268,13 @@ void MainWindow::createTrayIcon(){
 
 void MainWindow::onQuitAction(){
     emit dataManager->quittingApplication();
+}
+
+void MainWindow::on_actionChange_Settings_triggered()
+{
+    settingsWindow = new SettingsWindow(this, dataManager);
+    settingsWindow->setWindowTitle("Settings");
+    settingsWindow->show();
 }
 
 MainWindow::~MainWindow()

@@ -31,6 +31,12 @@ public:
     void refreshOnlineUsers();
     uint getRefreshTime();
     void setHostLastSeen(QUuid uniqueID, time_t time);
+    void setLocalHostVisibility(bool);
+    void setLocalHostName(QString);
+    void setReceiveFilesAutom(bool);
+    bool getReceiveFilesAutom();
+    void setIFDefaultSavingPath(bool);
+    bool getIFDefaultSavingPath();
 
 signals:
     void isUpdated();
@@ -43,6 +49,7 @@ signals:
     // Signals for GUI-ReceiverWorker communication
     void metadataStageEND(qint64, QString, QUuid, QString);
     void messageBoxYes();
+    void savingPath(QString);
 
     // Signal for Closing application
     void quittingApplication();
@@ -59,6 +66,8 @@ private:
     std::list<Host> toSend;
     std::list<Host> queueNextOnlineUsers;
     uint refreshTime = 10;
+    bool receiveFileAutomatically = false;
+    bool defaultSavingPath = true;
 
     QMutex mutex;
     //std::string file_path;

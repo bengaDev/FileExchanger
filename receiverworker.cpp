@@ -12,7 +12,8 @@ ReceiverWorker::ReceiverWorker(Data_Manager* dm, qintptr socketDescriptor)
         return;
     }
 
-    connect(dm, SIGNAL(messageBoxYes()), this, SLOT(dataStageSTART()), Qt::QueuedConnection);
+    //connect(dm, SIGNAL(messageBoxYes()), this, SLOT(dataStageSTART()), Qt::QueuedConnection);
+    connect(dm, SIGNAL(savingPath(QString)), this, SLOT(pathSelectionSTART(QString)), Qt::QueuedConnection);
 }
 
 void ReceiverWorker::metadataStageSTART(){
@@ -83,16 +84,30 @@ void ReceiverWorker::metadataStageSTART(){
 
 }
 
+void ReceiverWorker::pathSelectionSTART(QString path){
+
+    if(dm->getIFDefaultSavingPath() == true){
+        file = new QFile("./" + fileName);
+    }
+    else{
+        file = new QFile(path + "/" + fileName);
+    }
+    dataStageSTART();
+
+}
+
 void ReceiverWorker::dataStageSTART(){
 
     tcpSocket->write("YES");
     tcpSocket->waitForBytesWritten(5000);
 
     QByteArray fileBuffer;
-    QFile file("./" + fileName);
+
     qDebug() << "-------------File name is: " << fileName;
 
-    file.open(QIODevice::WriteOnly);
+    if(file->open(QIODevice::WriteOnly)== false){
+        qDebug() << "File not opened correctly - RECEIVER";
+    }
 
     emit dm->setProgBarMaximum_RECEIVER(uniqueID, fileSize);
 
@@ -115,12 +130,12 @@ void ReceiverWorker::dataStageSTART(){
 
         fileBuffer = tcpSocket->readAll();
 
-        file.write(fileBuffer);
+        file->write(fileBuffer);
     }
 
     emit dm->setProgBarValue_RECEIVER(uniqueID, receivedBytes);
 
-    file.close();
+    file->close();
 
     // At this point file is received, and thread should close.
     // In order to do this emit signal 'closeThread'

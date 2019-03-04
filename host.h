@@ -15,9 +15,11 @@ public:
     bool isVisible();
     QPixmap getAvatar();
     QString getName();
+    void setName(QString);
     void createuniqueID();
     QUuid getUniqueID();
     QString getVisibilityStatus();
+    void setVisibility(bool);
     void setAvatar(QPixmap);
     void setUniqueID(QUuid uniqueID);
     bool operator==(Host h);
