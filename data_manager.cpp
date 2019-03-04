@@ -148,15 +148,24 @@ void Data_Manager::updateHostInfo(QUuid uniqueID, time_t time, QString name){
     for(Host &tmp : onlineUsers){
         if(tmp.getUniqueID() == uniqueID){
             tmp.setLastSeen(time);
-            tmp.setName(name);
+            if(tmp.getName() != name){
+                tmp.setName(name);
+                emit isUpdated();
+            }
         }
     }
 }
 
 
 void Data_Manager::setLocalHostVisibility(bool visibility){
+    if(localHost->isVisible() == true && visibility == false){
+        emit quittingApplication();
+    }
+    if(localHost->isVisible() != visibility){
+        localHost->setVisibility(visibility);
+        emit isUpdated();
+    }
 
-    localHost->setVisibility(visibility);
 }
 
 void Data_Manager::setLocalHostName(QString name){

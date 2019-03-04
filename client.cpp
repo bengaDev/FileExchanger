@@ -286,7 +286,6 @@ void Client::onQuittingApplication(){
         qDebug() << "Client: Could not send last message -- UDP";
     } else {
         qDebug() << "Client: Last message sended -- UDP" << udpSocket.state();
-
     }
 }
 
