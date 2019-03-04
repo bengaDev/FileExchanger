@@ -120,8 +120,6 @@ void ReceiverWorker::dataStageSTART(){
 
     emit dm->setProgBarValue_RECEIVER(uniqueID, receivedBytes);
 
-    file.write(fileBuffer);
-
     file.close();
 
     // At this point file is received, and thread should close.

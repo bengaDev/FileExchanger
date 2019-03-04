@@ -1,6 +1,7 @@
 #include "senderworker.h"
 
-SenderWorker::SenderWorker(Data_Manager* dm, Host h)
+SenderWorker::SenderWorker(Data_Manager* dm, Host h, QObject *parent) :
+    QObject (parent)
 {
     this->dm = dm;
     this->h = h;
@@ -12,13 +13,6 @@ SenderWorker::SenderWorker(Data_Manager* dm, Host h)
 
     //add connects to send meta-data and file
     connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(checkResponse()));
- /*
-    if (!tcpSocket->setSocketDescriptor(socketDescriptor)) {
-        //emit error(tcpSocket.error());
-        qDebug() << "SenderWorker: error in opening socket thorugh 'socketDescriptor' - Threaded";
-        return;
-    }
-*/
 
 }
 
@@ -118,3 +112,9 @@ void SenderWorker::sendFile(){
     // In order to do this emit signal 'closeThread'
     emit closeThread();
 }
+
+
+void SenderWorker::closeConnection(){
+    tcpSocket->close(); // automatically calls tcpSocket->disconnectFromHost();
+}
+

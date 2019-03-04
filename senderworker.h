@@ -10,8 +10,8 @@ class SenderWorker : public QObject
 {
     Q_OBJECT
 public:
-    //explicit SenderWorker(QObject *parent = nullptr);
-    SenderWorker(Data_Manager* dm, Host h);
+    explicit SenderWorker(Data_Manager* dm, Host h, QObject *parent = nullptr);
+    //SenderWorker(Data_Manager* dm, Host h);
 
     void sendFile();
 
@@ -21,6 +21,7 @@ signals:
 public slots:
     void checkResponse();
     void sendMetaData();
+    void closeConnection();//to be connected with closing windowProgressBar
 
 private:
     Data_Manager* dm;
