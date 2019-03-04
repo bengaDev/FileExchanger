@@ -30,7 +30,7 @@ public:
     QString getFileName();
     void refreshOnlineUsers();
     uint getRefreshTime();
-    void setHostLastSeen(QUuid uniqueID, time_t time);
+    void updateHostInfo(QUuid uniqueID, time_t time, QString name);
     void setLocalHostVisibility(bool);
     void setLocalHostName(QString);
     void setReceiveFilesAutom(bool);

@@ -25,9 +25,18 @@ private slots:
 
     void on_defaultSavePathCheckBox_stateChanged(int arg1);
 
+    void on_okPushBtn_clicked();
+
+    void on_cancelPushBtn_clicked();
+
 private:
     Ui::SettingsWindow *ui;
     Data_Manager *dm;
+
+    bool isVisible;
+    QString userName;
+    bool receivesFileAutom;
+    bool isDefaultPath;
 };
 
 #endif // SETTINGSWINDOW_H

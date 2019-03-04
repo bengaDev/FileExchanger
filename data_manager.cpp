@@ -144,10 +144,12 @@ uint Data_Manager::getRefreshTime(){
     return refreshTime;
 }
 
-void Data_Manager::setHostLastSeen(QUuid uniqueID, time_t time){
+void Data_Manager::updateHostInfo(QUuid uniqueID, time_t time, QString name){
     for(Host &tmp : onlineUsers){
-        if(tmp.getUniqueID() == uniqueID)
+        if(tmp.getUniqueID() == uniqueID){
             tmp.setLastSeen(time);
+            tmp.setName(name);
+        }
     }
 }
 

@@ -1,7 +1,6 @@
 #include "senderworker.h"
 
-SenderWorker::SenderWorker(Data_Manager* dm, Host h, QObject *parent) :
-    QObject (parent)
+SenderWorker::SenderWorker(Data_Manager* dm, Host h)
 {
     this->dm = dm;
     this->h = h;

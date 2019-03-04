@@ -69,7 +69,8 @@ void Server::readBroadcastDatagram(){
             // If these two requirements are satisfied -> send me your avatar message
             if(visibility == "VISIBLE" && dm->isPresentInOnlineUsers(QUuid(uniqueID)) == true){
                 // refresh last seen time
-               dm->setHostLastSeen(QUuid(uniqueID), receivedTime);
+               dm->updateHostInfo(QUuid(uniqueID), receivedTime, name);
+
             }else if(visibility == "NOTVISIBLE" && dm->isPresentInOnlineUsers(QUuid(uniqueID)) == true){
                 dm->deleteOnlineUser(QUuid(uniqueID));
             }else if(visibility == "VISIBLE" && dm->isPresentInOnlineUsers(QUuid(uniqueID)) == false){

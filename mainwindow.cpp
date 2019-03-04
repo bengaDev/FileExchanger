@@ -91,7 +91,7 @@ void MainWindow::messageBoxYES_NO(qint64 fileSize, QString fileName, QUuid id, Q
             addReceiverProgBar(id, senderName);
         }
         else if(reply == QMessageBox::No){
-
+            //TO DO: close socket
         }
     }
 
