@@ -16,6 +16,15 @@ Host::Host(bool visible, QString name)
 
 }
 
+Host::Host(const Host& h){
+    this->visible = h.visible;
+    this->name = h.name;
+    this->avatar = nullptr;
+    this->ipAddr = h.ipAddr;
+    this->lastSeen = h.lastSeen;
+    this->uniqueID = h.uniqueID;
+}
+
 void Host::setVisibility(bool visibility){
     this->visible = visibility;
 }
