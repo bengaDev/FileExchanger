@@ -104,6 +104,8 @@ void SenderWorker::sendFile(){
         // Update progress bar
         emit dm->setProgBarValue_SENDER(id, bytesWritten);
     }
+    file->close();
+
     qDebug() << "SenderWorker: file sendend!";
     qDebug() << "--------------BytesWritten: " << bytesWritten ;
 
