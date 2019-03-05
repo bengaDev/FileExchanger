@@ -12,7 +12,8 @@ SenderWorker::SenderWorker(Data_Manager* dm,QUuid id, QHostAddress addr)
 
     //add connects to send meta-data and file
     connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(checkResponse()));
-
+    //add connect to close socket
+    connect(tcpSocket, SIGNAL(disconnected()), this, SLOT(on_disconnected()));
 }
 
 
@@ -114,6 +115,9 @@ void SenderWorker::sendFile(){
     emit closeThread();
 }
 
+void SenderWorker::on_disconnected(){
+    qDebug() << "SenderWorker: SOCKET DISCONNECTED!";
+}
 
 void SenderWorker::closeConnection(){
     tcpSocket->close(); // automatically calls tcpSocket->disconnectFromHost();

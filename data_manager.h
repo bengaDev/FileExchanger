@@ -47,6 +47,7 @@ signals:
     void setProgBarValue_SENDER(QUuid, qint64);
     void setProgBarMaximum_RECEIVER(QUuid, qint64);
     void setProgBarValue_RECEIVER(QUuid, qint64);
+    void closeSocket();
 
     // Signals for GUI-ReceiverWorker communication
     void metadataStageEND(qint64, QString, QUuid, QString);

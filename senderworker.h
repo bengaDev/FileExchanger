@@ -23,6 +23,7 @@ public slots:
     void sendMetaData();
     void closeConnection();//to be connected with closing windowProgressBar
 
+    void on_disconnected();
 private:
     Data_Manager* dm;
     QUuid id;

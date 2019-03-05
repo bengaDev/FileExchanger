@@ -14,6 +14,7 @@ ReceiverWorker::ReceiverWorker(Data_Manager* dm, qintptr socketDescriptor)
 
     //connect(dm, SIGNAL(messageBoxYes()), this, SLOT(dataStageSTART()), Qt::QueuedConnection);
     connect(dm, SIGNAL(savingPath(QString)), this, SLOT(pathSelectionSTART(QString)), Qt::QueuedConnection);
+    connect(dm, SIGNAL(closeSocket()), this, SLOT(closeConnection()), Qt::QueuedConnection);
 }
 
 void ReceiverWorker::metadataStageSTART(){
@@ -141,6 +142,11 @@ void ReceiverWorker::dataStageSTART(){
     // In order to do this emit signal 'closeThread'
 
     emit closeThread();
+}
+
+void ReceiverWorker::closeConnection(){
+    tcpSocket->close();
+    qDebug() << "ReceiverWorker: SOCKET CLOSED!";
 }
 
 ReceiverWorker::~ReceiverWorker(){

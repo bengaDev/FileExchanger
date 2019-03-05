@@ -23,6 +23,8 @@ public slots:
     void pathSelectionSTART(QString);
     void dataStageSTART();
 
+    void closeConnection();
+
 private:
     Data_Manager* dm;
     QTcpSocket* tcpSocket;
