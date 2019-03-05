@@ -1,12 +1,12 @@
 #include "senderworker.h"
 
-SenderWorker::SenderWorker(Data_Manager* dm, Host h)
+SenderWorker::SenderWorker(Data_Manager* dm,QUuid id, QHostAddress addr)
 {
     this->dm = dm;
-    this->h = h;
+    this->id = id;
     tcpSocket = new QTcpSocket(this);
-    qDebug() << "SenderWorker: unique id =  " << h.getUniqueID() ;
-    tcpSocket->connectToHost(h.getIP(), SERVER_PORT);
+    qDebug() << "SenderWorker: unique id =  " << id ;
+    tcpSocket->connectToHost(addr, SERVER_PORT);
     qDebug() << "SenderWorker: socket state = " << tcpSocket->state() << " ( thread id: "
              << QThread::currentThreadId() << " )";
 
@@ -50,7 +50,7 @@ void SenderWorker::sendMetaData(){
 
 
     // Set Max Value in corresponding ProgressBar of host 'h'
-    emit dm->setProgBarMaximum_SENDER(h.getUniqueID(), TotalBytes);
+    emit dm->setProgBarMaximum_SENDER(id, TotalBytes);
 
     ////// WAIT FOR CLIENT TO ACCEPT REQUEST!//////
     //read on tcp socket -> receive ok from client
@@ -102,7 +102,7 @@ void SenderWorker::sendFile(){
             }
         }
         // Update progress bar
-        emit dm->setProgBarValue_SENDER(h.getUniqueID(), bytesWritten);
+        emit dm->setProgBarValue_SENDER(id, bytesWritten);
     }
     qDebug() << "SenderWorker: file sendend!";
     qDebug() << "--------------BytesWritten: " << bytesWritten ;

@@ -12,7 +12,7 @@ class Host
 {
 public:
     Host(bool visible = true, QString name = "none");
-    Host(const Host& h);
+    //Host(const Host& h);
     bool isVisible();
     QPixmap getAvatar();
     QString getName();

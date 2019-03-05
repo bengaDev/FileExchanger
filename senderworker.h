@@ -11,7 +11,7 @@ class SenderWorker : public QObject
     Q_OBJECT
 public:
     //explicit SenderWorker(Data_Manager* dm, Host h, QObject *parent = nullptr);
-    SenderWorker(Data_Manager* dm, Host h);
+    SenderWorker(Data_Manager* dm, QUuid id, QHostAddress addr);
 
     void sendFile();
 
@@ -25,7 +25,8 @@ public slots:
 
 private:
     Data_Manager* dm;
-    Host h;
+    QUuid id;
+    //QHostAddress addr;
     QTcpSocket* tcpSocket;
 
     QFile* file;
