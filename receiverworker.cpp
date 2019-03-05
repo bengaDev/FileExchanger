@@ -99,7 +99,7 @@ void ReceiverWorker::pathSelectionSTART(QString path){
 void ReceiverWorker::dataStageSTART(){
 
     tcpSocket->write("YES");
-    tcpSocket->waitForBytesWritten(5000);
+    tcpSocket->waitForBytesWritten(30000);
 
     QByteArray fileBuffer;
 
@@ -141,4 +141,9 @@ void ReceiverWorker::dataStageSTART(){
     // In order to do this emit signal 'closeThread'
 
     emit closeThread();
+}
+
+ReceiverWorker::~ReceiverWorker(){
+    //disconnect(this, 0, 0, 0);
+    this->disconnect();
 }

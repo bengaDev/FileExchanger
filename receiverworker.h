@@ -12,6 +12,7 @@ class ReceiverWorker : public QObject
     Q_OBJECT
 public:
     ReceiverWorker(Data_Manager* dm, qintptr socketDescriptor);
+    ~ReceiverWorker();
 
 signals:
     void closeThread();

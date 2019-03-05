@@ -173,8 +173,8 @@ void Client::sendFile(){
             //add connects to manage thread closing
             connect(senderThread, SIGNAL(started()), senderWorker, SLOT(sendMetaData()));
             connect(senderWorker, SIGNAL(closeThread()), senderThread, SLOT(quit()));
-            connect(senderWorker, SIGNAL(closeThread()), senderThread, SLOT(deleteLater()));
-            connect(senderThread, SIGNAL(finished()), senderWorker, SLOT(deleteLater()));
+            connect(senderWorker, SIGNAL(closeThread()), senderWorker, SLOT(deleteLater()));
+            connect(senderThread, SIGNAL(finished()), senderThread, SLOT(deleteLater()));
 
             senderThread->start();
 
