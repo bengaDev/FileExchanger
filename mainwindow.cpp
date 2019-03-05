@@ -52,9 +52,6 @@ MainWindow::MainWindow(QWidget *parent, Data_Manager* dM) :
     // Connections for GUI receiver side
     connect(dataManager, SIGNAL(metadataStageEND(qint64, QString, QUuid, QString)), this, SLOT(messageBoxYES_NO(qint64, QString, QUuid, QString)));
 
-    receiverWindow = new WindowProgressBar(this, dataManager);
-    receiverWindow->setWindowTitle("Receiving file");
-
     ///dataManager->addOnlineUser(h1);
     ///dataManager->deleteOnlineUser(h1);
 
@@ -118,6 +115,9 @@ void MainWindow::onShareButton(){
 
 
 void MainWindow::addReceiverProgBar(QUuid id, QString senderName){
+
+    receiverWindow = new WindowProgressBar(this, dataManager);
+    receiverWindow->setWindowTitle("Receiving file");
 
     receiverWindow->addProgessBars_ReceivingFrom(id, senderName);
 
@@ -187,12 +187,12 @@ ContainerGUI* MainWindow::fromHost_to_Container(Host h){
 }
 
 void MainWindow::addUuidToSend_SLOT(QUuid ID){
-    dataManager->addToSendUsers(ID);
+    dataManager->addToSendUser(ID);
     ui->ListCounter->setText(QString::number(ui->ListCounter->text().toInt()+1));
 }
 
 void MainWindow::deleteUuidToSend_SLOT(QUuid ID){
-    dataManager->deleteToSendUsers(ID);
+    dataManager->deleteToSendUser(ID);
 }
 
 QString MainWindow::avatarStyleSheet(){

@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
     //QString fileName("C:/Users/Benjamin/Desktop/Poli/Prog_SISTEMA/PROGETTO/PDS_fileExchanger/Icon_IMG/I Feel Good.mp3");
-    QString fileName("./../PDS_fileExchanger/Icon_IMG/I Feel Good.mp3");
+    QString fileName("./../PDS_fileExchanger/Icon_IMG/avatar_2.png");
     //QString fileName(":Icon_IMG/avatar_2.png");
 
     for (int i = 1; i < argc; ++i){

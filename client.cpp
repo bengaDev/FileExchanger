@@ -54,7 +54,7 @@ void Client::hello(){
         qDebug() << "Client: Broadcasting basic info -- UDP";
 
 
-        if(udpSocket.writeDatagram(datagram, QHostAddress::Broadcast/*("192.168.1.255")*/, SERVER_PORT) == -1){
+        if(udpSocket.writeDatagram(datagram, QHostAddress("192.168.1.255"), SERVER_PORT) == -1){
 
             qDebug() << "Client: Could not send broadcast basic info -- UDP";
         } else {
@@ -177,7 +177,9 @@ void Client::sendFile(){
             connect(senderThread, SIGNAL(finished()), senderWorker, SLOT(deleteLater()));
 
             senderThread->start();
+
         }
+        dm->deleteAllToSendUsers();
     }
 }
 

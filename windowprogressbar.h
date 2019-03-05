@@ -25,6 +25,8 @@ public:
     void addProgressBars_SendTo(std::list<Host> toSendUsers);
     void addProgessBars_ReceivingFrom(QUuid, QString);
 
+    void closeEvent(QCloseEvent *e) override;
+
 private slots:
     void onSetMaximumProgBar(QUuid, qint64);
     void onSetValueProgBar(QUuid, qint64);

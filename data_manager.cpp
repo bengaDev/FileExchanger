@@ -73,15 +73,26 @@ bool Data_Manager::isPresentInOnlineUsers(QUuid id){
 
 }
 
-void Data_Manager::addToSendUsers(QUuid uniqueID){
+bool Data_Manager::isPresentInToSendUsers(QUuid id){
+    if(!toSend.empty()){
+        for(std::list<Host>::iterator it = toSend.begin(); it != toSend.end(); it++){
+            if(it->getUniqueID() == id){
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+void Data_Manager::addToSendUser(QUuid uniqueID){
     for(std::list<Host>::iterator it = onlineUsers.begin(); it != onlineUsers.end(); it++){
-        if(it->getUniqueID() == uniqueID){
+        if(!isPresentInToSendUsers(uniqueID) && it->getUniqueID() == uniqueID){
             toSend.push_back(*it);
         }
     }
 }
 
-void Data_Manager::deleteToSendUsers(QUuid uniqueID){
+void Data_Manager::deleteToSendUser(QUuid uniqueID){
 
     toSend.remove_if([uniqueID](Host h){
         if(h.getUniqueID() == uniqueID){
@@ -90,6 +101,11 @@ void Data_Manager::deleteToSendUsers(QUuid uniqueID){
             return false;
         }
     });
+}
+
+void Data_Manager::deleteAllToSendUsers(){
+
+    toSend.clear();
 }
 
 void Data_Manager::addQueueNextOnlineUsers(Host h){

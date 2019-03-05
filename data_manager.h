@@ -20,7 +20,9 @@ public:
     Host *localHost;
     void addOnlineUser(Host newHost);
     void deleteOnlineUser(QUuid hostID);
+    void deleteAllToSendUsers();
     bool isPresentInOnlineUsers(QUuid);
+    bool isPresentInToSendUsers(QUuid);
     void addQueueNextOnlineUsers(Host);
     void setAvatarOfNextOnlineUser(QPixmap, QUuid);
     void DEBUG_clearOnlineUsers();
@@ -55,8 +57,8 @@ signals:
     void quittingApplication();
 
 public slots:
-    void addToSendUsers(QUuid uniqueID);
-    void deleteToSendUsers(QUuid uniqueID);
+    void addToSendUser(QUuid uniqueID);
+    void deleteToSendUser(QUuid uniqueID);
     void DEBUG_trySlot(QUuid, qint64);
 
 private:
