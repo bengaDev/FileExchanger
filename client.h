@@ -4,6 +4,8 @@
 
 #include <QObject>
 #include <QDebug>
+#include <QHostAddress>
+#include <QNetworkAddressEntry>
 #include <QTcpSocket>
 #include <QTcpServer>
 #include <QUdpSocket>
@@ -37,7 +39,9 @@ private:
     void sendAvatar(QHostAddress);
     void sendMetadataToUser(Host h);
     void sendingFile(QTcpSocket* tcpSocket, QFile* file, Host h);
-    //void (Client::*p)() = &Client::hello;
+    QHostAddress findBroadcastAddress();
+
+    QHostAddress broadcastAddress;
     QTcpSocket *broadcastTcpSocket;
 
     QAtomicInt atomicLoopFlag = 1;

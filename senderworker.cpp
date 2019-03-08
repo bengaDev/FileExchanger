@@ -117,6 +117,10 @@ void SenderWorker::sendFile(){
 
 void SenderWorker::on_disconnected(){
     qDebug() << "SenderWorker: SOCKET DISCONNECTED!";
+    //close window
+
+    //close thread
+    emit closeThread();
 }
 
 void SenderWorker::closeConnection(){

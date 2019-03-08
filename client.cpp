@@ -31,6 +31,8 @@ Client::Client(Data_Manager *dm, QObject *parent) :
         qDebug() << "Client: UDP listener started!";
     }
 
+    broadcastAddress = findBroadcastAddress();
+
     connect(udpSocket, SIGNAL(readyRead()), this, SLOT(on_UdpReceive()));
 
     connect(dm, SIGNAL(sendFile_SIGNAL()), this, SLOT(sendFile()));
@@ -54,7 +56,7 @@ void Client::hello(){
         qDebug() << "Client: Broadcasting basic info -- UDP";
 
 
-        if(udpSocket.writeDatagram(datagram, QHostAddress("192.168.1.255"), SERVER_PORT) == -1){
+        if(udpSocket.writeDatagram(datagram, broadcastAddress, SERVER_PORT) == -1){
 
             qDebug() << "Client: Could not send broadcast basic info -- UDP";
         } else {
@@ -272,6 +274,44 @@ void Client::sendingFile(QTcpSocket* tcpSocket, QFile* file, Host h){
     }
     qDebug() << "--------------BytesWritten: " << bytesWritten ;
 
+}
+
+QHostAddress Client::findBroadcastAddress(){
+    QHostAddress localHostAddress;
+    QHostAddress broadcast = QHostAddress("0.0.0.0");
+    QTcpSocket socket;
+
+    socket.connectToHost("8.8.8.8", 53); // google DNS, or something else reliable
+
+    if (socket.waitForConnected()) {
+        qDebug()
+            << "local IPv4 address for Internet connectivity is"
+            << socket.localAddress();
+            localHostAddress = socket.localAddress();
+    } else {
+        qWarning()
+            << "could not determine local IPv4 address:"
+            << socket.errorString();
+    }
+
+    foreach (const QNetworkInterface &interface, QNetworkInterface::allInterfaces()) {
+        foreach(const QNetworkAddressEntry &address, interface.addressEntries()){
+            /*
+            if(address.ip().protocol() == QAbstractSocket::IPv4Protocol){
+                qDebug() << "Address: " << address.ip().toString();
+                qDebug() << "broadcast: " << address.broadcast().toString();
+                qDebug() << "netmask: " << address.netmask().toString();
+            }
+            */
+            if (address.ip() == localHostAddress)
+                qDebug() << "---------- Broadcast: " << address.broadcast();
+                broadcast = address.broadcast();
+        }
+        //qDebug() << "______________________________________________";
+    }
+
+
+    return broadcast;
 }
 
 void Client::onQuittingApplication(){
