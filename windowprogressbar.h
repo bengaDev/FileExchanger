@@ -6,6 +6,7 @@
 #include <QPushButton>
 #include <QProgressBar>
 #include <QMap>
+#include <QSignalMapper>
 
 #include "data_manager.h"
 #include "flowlayout.h"
@@ -30,6 +31,8 @@ public:
 private slots:
     void onSetMaximumProgBar(QUuid, qint64);
     void onSetValueProgBar(QUuid, qint64);
+    void onInterruptSending(QString);
+    void onInterruptReceiving(QString);
     //void onSetMaximumProgBar_RECEIVER(QUuid, qint64);
     //void onSetValueProgBar_RECEIVER(QUuid, qint64);
     void DEBUG_destroyedSlot();

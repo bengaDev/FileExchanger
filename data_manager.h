@@ -57,10 +57,14 @@ signals:
     // Signal for Closing application
     void quittingApplication();
 
+    //Signal for transmission interruption by user pushbutton
+    void interruptSending(QUuid);
+    void interruptReceiving(QUuid);
+
 public slots:
     void addToSendUser(QUuid uniqueID);
     void deleteToSendUser(QUuid uniqueID);
-    void DEBUG_trySlot(QUuid, qint64);
+    void DEBUG_trySlot(QUuid);
 
 private:
     QFile *fileToSend = nullptr;

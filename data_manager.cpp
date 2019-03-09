@@ -209,6 +209,6 @@ void Data_Manager::DEBUG_clearOnlineUsers(){
     emit isUpdated();
 }
 
-void Data_Manager::DEBUG_trySlot(QUuid id, qint64 max){
-    qDebug() << "TRY" << id << max;
+void Data_Manager::DEBUG_trySlot(QUuid id){
+    qDebug() << "TRY" << id;
 }

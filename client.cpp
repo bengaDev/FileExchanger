@@ -303,9 +303,10 @@ QHostAddress Client::findBroadcastAddress(){
                 qDebug() << "netmask: " << address.netmask().toString();
             }
             */
-            if (address.ip() == localHostAddress)
+            if (address.ip() == localHostAddress){
                 qDebug() << "---------- Broadcast: " << address.broadcast();
                 broadcast = address.broadcast();
+            }
         }
         //qDebug() << "______________________________________________";
     }
