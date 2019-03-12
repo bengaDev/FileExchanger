@@ -23,6 +23,9 @@ public slots:
     void sendMetaData();
     void closeConnection();//to be connected with closing windowProgressBar
 
+    void onInterruptSending(QUuid id);
+    void DEBUG_socketStateChanged();
+
     void on_disconnected();
 private:
     Data_Manager* dm;

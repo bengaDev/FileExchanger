@@ -44,8 +44,10 @@ void WindowProgressBar::addProgressBars_SendTo(std::list<Host> toSendUsers){
         internalVLayout->addStretch(1);
 
         QPushButton *cancelBtn = new QPushButton("Cancel", container);
-        QUuid id = host->getUniqueID();
+        QUuid id = host->getUniqueID();       
+
         connect(cancelBtn, &QPushButton::clicked, [id, this](){
+            qDebug() << "onInterruptSending: idStr = " +id.toString();
             emit dm->interruptSending(id);
         });
 
@@ -85,7 +87,9 @@ void WindowProgressBar::addProgessBars_ReceivingFrom(QUuid id, QString name){
     internalVLayout->addStretch(1);
 
     QPushButton *cancelBtn = new QPushButton("Cancel", container);
+
     connect(cancelBtn, &QPushButton::clicked, [id, this](){
+        qDebug() << "onInterruptReceiving: idStr = " +id.toString();
         emit dm->interruptReceiving(id);
     });
 
@@ -134,7 +138,7 @@ void WindowProgressBar::onInterruptSending(QString idStr){
     emit dm->interruptSending(QUuid(idStr));
 }
 
-void WindowProgressBar::onInterruptReceiving(QString idStr){
+void WindowProgressBar::onInterruptReceiving(QString idStr){    
     emit dm->interruptReceiving(QUuid(idStr));
 }
 

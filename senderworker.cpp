@@ -4,15 +4,24 @@ SenderWorker::SenderWorker(Data_Manager* dm,QUuid id, QHostAddress addr)
 {
     this->dm = dm;
     this->id = id;
+
     tcpSocket = new QTcpSocket(this);
+
     qDebug() << "SenderWorker: unique id =  " << id ;
+
     tcpSocket->connectToHost(addr, SERVER_PORT);
+
     qDebug() << "SenderWorker: socket state = " << tcpSocket->state() << " ( thread id: "
              << QThread::currentThreadId() << " )";
 
     //add connects to send meta-data and file
     connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(checkResponse()));
+
     //add connect to close socket
+    connect(dm, SIGNAL(interruptSending(QUuid)), this, SLOT(onInterruptSending(QUuid)), Qt::QueuedConnection);
+
+    connect(tcpSocket, SIGNAL(stateChanged()), this, SLOT(DEBUG_socketStateChanged()));
+
     connect(tcpSocket, SIGNAL(disconnected()), this, SLOT(on_disconnected()));
 }
 
@@ -115,6 +124,17 @@ void SenderWorker::sendFile(){
     emit closeThread();
 }
 
+
+void SenderWorker::onInterruptSending(QUuid id){
+    qDebug() << "SenderWorker: onInterruptSending-> " + id.toString();
+    if(this->id == id){
+        closeConnection();
+
+        on_disconnected();
+    }
+}
+
+
 void SenderWorker::on_disconnected(){
     qDebug() << "SenderWorker: SOCKET DISCONNECTED!";
     //close window
@@ -124,6 +144,16 @@ void SenderWorker::on_disconnected(){
 }
 
 void SenderWorker::closeConnection(){
+    qDebug() << "SenderWorker: Closing socket!";
+    qDebug() << &"SenderWorker: socket state = " [ tcpSocket->state()];
+    if(tcpSocket->state() == QAbstractSocket::ClosingState){
+        qDebug() << "SenderWorker: Socket ALREADY closed!!";
+    }
     tcpSocket->close(); // automatically calls tcpSocket->disconnectFromHost();
 }
 
+
+void SenderWorker::DEBUG_socketStateChanged(){
+    qDebug() << "SenderWorker: SOCKET STATE CHANGED!";
+
+}

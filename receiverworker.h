@@ -23,6 +23,7 @@ public slots:
     void pathSelectionSTART(QString);
     void dataStageSTART();
 
+    void onInterruptReceiving(QUuid);
     void closeConnection();
 
 private:

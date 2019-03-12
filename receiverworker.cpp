@@ -15,6 +15,9 @@ ReceiverWorker::ReceiverWorker(Data_Manager* dm, qintptr socketDescriptor)
     //connect(dm, SIGNAL(messageBoxYes()), this, SLOT(dataStageSTART()), Qt::QueuedConnection);
     connect(dm, SIGNAL(savingPath(QString)), this, SLOT(pathSelectionSTART(QString)), Qt::QueuedConnection);
     connect(dm, SIGNAL(closeSocket()), this, SLOT(closeConnection()), Qt::QueuedConnection);
+
+    connect(dm, SIGNAL(interruptReceiving(QUuid)), this, SLOT(onInterruptReceiving(QUuid)), Qt::QueuedConnection);
+
 }
 
 void ReceiverWorker::metadataStageSTART(){
@@ -143,6 +146,17 @@ void ReceiverWorker::dataStageSTART(){
 
     emit closeThread();
 }
+
+
+void ReceiverWorker::onInterruptReceiving(QUuid id){
+    qDebug() << "SenderWorker: onInterruptReceived-> " + id.toString();
+    QUuid this_id = QUuid(this->uniqueID);
+
+    if(this_id == id){
+        closeConnection();
+    }
+}
+
 
 void ReceiverWorker::closeConnection(){
     tcpSocket->close();
