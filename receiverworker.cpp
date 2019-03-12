@@ -211,7 +211,7 @@ void ReceiverWorker::on_disconnected(){
     qDebug() << "ReceiverWorker: SOCKET DISCONNECTED!";
     //close window
 
-    if(file->isOpen()){
+    if(file != nullptr && file->isOpen()){
         file->remove();
     }
 
@@ -222,6 +222,8 @@ void ReceiverWorker::on_disconnected(){
 void ReceiverWorker::closeConnection(){
     tcpSocket->close();
     qDebug() << "ReceiverWorker: SOCKET CLOSED!";
+
+    emit closeThread();
 }
 
 ReceiverWorker::~ReceiverWorker(){

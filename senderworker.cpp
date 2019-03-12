@@ -20,7 +20,7 @@ SenderWorker::SenderWorker(Data_Manager* dm,QUuid id, QHostAddress addr)
     //add connect to close socket
     connect(dm, SIGNAL(interruptSending(QUuid)), this, SLOT(onInterruptSending(QUuid)), Qt::QueuedConnection);
 
-    connect(tcpSocket, SIGNAL(stateChanged()), this, SLOT(DEBUG_socketStateChanged()));
+    //connect(tcpSocket, SIGNAL(stateChanged()), this, SLOT(DEBUG_socketStateChanged()));
 
     connect(tcpSocket, SIGNAL(disconnected()), this, SLOT(on_disconnected()));
 }
@@ -29,12 +29,11 @@ SenderWorker::SenderWorker(Data_Manager* dm,QUuid id, QHostAddress addr)
 void SenderWorker::sendMetaData(){
     qDebug() << "SenderWorker: sending Meta-Data";
 
-    file = dm->getFileToSend();
+    file = new QFile(dm->getFilePath());
 
     if(file->open(QIODevice::ReadOnly) == false){
         qDebug() << "SenderWorker: " << "Error opening File";
     }
-
 
     qint64 TotalBytes = file->size();
 
@@ -180,7 +179,6 @@ void SenderWorker::onInterruptSending(QUuid id){
 
         closeConnection();
 
-        //on_disconnected();
     }
 }
 
@@ -204,6 +202,8 @@ void SenderWorker::closeConnection(){
         qDebug() << "SenderWorker: Socket ALREADY closed!!";
     }
     tcpSocket->close(); // automatically calls tcpSocket->disconnectFromHost();
+
+    emit closeThread();
 }
 
 

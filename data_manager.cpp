@@ -7,7 +7,7 @@ Data_Manager::Data_Manager(QString localHostName, QString filePath)
     localHost->createuniqueID();
 
     if(filePath !=nullptr){
-        fileToSend = new QFile(filePath);
+        this->filePath = filePath;
         QStringList tokens;
         tokens = filePath.split("/");
         fileName = tokens.last();
@@ -126,8 +126,8 @@ void Data_Manager::setAvatarOfNextOnlineUser(QPixmap avatar, QUuid uniqueID){
     mutex.unlock();
 }
 
-QFile* Data_Manager::getFileToSend(){
-    return fileToSend;
+QString Data_Manager::getFilePath(){
+    return filePath;
 }
 
 QString Data_Manager::getFileName(){

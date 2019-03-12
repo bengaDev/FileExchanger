@@ -184,13 +184,13 @@ void Client::sendFile(){
         dm->deleteAllToSendUsers();
     }
 }
-
+/*
 void Client::sendMetadataToUser(Host h){
     // -------------------------
     // INSIDE SEPARATE THREAD
     // -------------------------
 
-    QFile* file = dm->getFileToSend();
+    QFile* file = dm->getFilePath();
     if(file->open(QIODevice::ReadOnly) == false){
         qDebug() << "Error opening File";
     }
@@ -275,6 +275,7 @@ void Client::sendingFile(QTcpSocket* tcpSocket, QFile* file, Host h){
     qDebug() << "--------------BytesWritten: " << bytesWritten ;
 
 }
+*/
 
 QHostAddress Client::findBroadcastAddress(){
     QHostAddress localHostAddress;

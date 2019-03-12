@@ -123,15 +123,21 @@ void WindowProgressBar::onSetMaximumProgBar(QUuid id, qint64 max){
         QProgressBar *progBar = container->findChild<QProgressBar*>();
 
         progBar->setMaximum(max);
-    }else
+    }else{
         qDebug() << "ERROR! NOT VALID ID in onSetMaximumProgBar";
+    }
 }
 
 void WindowProgressBar::onSetValueProgBar(QUuid id, qint64 val){
-    QWidget* container = progressBarMap.find(id).value();
-    QProgressBar *progBar = container->findChild<QProgressBar*>();
 
-    progBar->setValue(val);
+    if(progressBarMap.find(id) != progressBarMap.end()){
+        QWidget* container = progressBarMap.find(id).value();
+        QProgressBar *progBar = container->findChild<QProgressBar*>();
+
+        progBar->setValue(val);
+    } else{
+        qDebug() << "ERROR! NOT VALID ID in onSetValueProgBar";
+    }
 }
 
 void WindowProgressBar::closeEvent(QCloseEvent *e){

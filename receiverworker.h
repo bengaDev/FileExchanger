@@ -31,7 +31,7 @@ public slots:
 private:
     Data_Manager* dm;
     QTcpSocket* tcpSocket;
-    QFile *file;
+    QFile *file = nullptr;
     QByteArray fileBuffer;
 
     QByteArray sentData;

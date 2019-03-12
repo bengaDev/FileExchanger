@@ -28,7 +28,7 @@ public:
     void DEBUG_clearOnlineUsers();
     std::list<Host> getOnlineUsers();
     std::list<Host> getToSendUsers();
-    QFile* getFileToSend();
+    QString getFilePath();
     QString getFileName();
     void refreshOnlineUsers();
     uint getRefreshTime();
@@ -67,7 +67,7 @@ public slots:
     void DEBUG_trySlot(QUuid);
 
 private:
-    QFile *fileToSend = nullptr;
+    QString filePath = nullptr;
     QString fileName = nullptr;
     std::list<Host> onlineUsers; // le liste devono avere un lock?
     std::list<Host> toSend;
