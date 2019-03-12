@@ -134,14 +134,6 @@ void WindowProgressBar::onSetValueProgBar(QUuid id, qint64 val){
     progBar->setValue(val);
 }
 
-void WindowProgressBar::onInterruptSending(QString idStr){
-    emit dm->interruptSending(QUuid(idStr));
-}
-
-void WindowProgressBar::onInterruptReceiving(QString idStr){    
-    emit dm->interruptReceiving(QUuid(idStr));
-}
-
 void WindowProgressBar::closeEvent(QCloseEvent *e){
     this->close();
 }

@@ -21,7 +21,8 @@ signals:
 public slots:
     void checkResponse();
     void sendMetaData();
-    void closeConnection();//to be connected with closing windowProgressBar
+
+    void sendingStep();
 
     void onInterruptSending(QUuid id);
     void DEBUG_socketStateChanged();
@@ -36,6 +37,11 @@ private:
     QFile* file;
     static const int PayloadSize = 1 * 1024; // 64 KB
 
+    qint64 bytesWritten = 0;
+    QByteArray buffer;
+    QAtomicInt atomicFlag = 0;
+
+    void closeConnection();
 };
 
 #endif // SENDERWORKER_H

@@ -86,7 +86,8 @@ void SenderWorker::checkResponse(){
 ///called by signal readyRead
 void SenderWorker::sendFile(){
     qDebug() << "SenderWorker: start sending file";
-
+    QMetaObject::invokeMethod(this, "sendingStep", Qt::QueuedConnection);
+    /*
     // Read part of file and fill first 64KB TCP packet
     qint64 bytesWritten = 0;
     QByteArray buffer;
@@ -122,15 +123,64 @@ void SenderWorker::sendFile(){
     // At this point file is sended, and thread should close.
     // In order to do this emit signal 'closeThread'
     emit closeThread();
+    */
+}
+
+void SenderWorker::sendingStep(){
+
+    if(atomicFlag == 1){
+        return;
+    }
+
+    // Read part of file and fill first 64KB TCP packet
+    if(!file->atEnd()){
+        buffer.clear();
+        // If the number of bytes waiting to be written is > 4*PayloadSize
+        //      then don't write anything, and wait untill this number decreases
+        //      to start writing again
+        if(tcpSocket->bytesToWrite() <= 4*PayloadSize){
+
+            buffer = file->read(PayloadSize);
+
+            if((bytesWritten += tcpSocket->write(buffer)) < buffer.size()){
+                qDebug("Transmission error in sending file");
+            }
+            if(!tcpSocket->waitForBytesWritten(5000)){
+                qDebug() << "ERROR";
+            }
+        }
+        // Update progress bar
+        emit dm->setProgBarValue_SENDER(id, bytesWritten);
+
+        QMetaObject::invokeMethod(this, "sendingStep", Qt::QueuedConnection);
+
+    } else{
+
+        if(file->isOpen()){
+            file->close();
+        }
+
+        qDebug() << "SenderWorker: file sendend!";
+        qDebug() << "--------------BytesWritten: " << bytesWritten ;
+
+        // At this point file is sended, and thread should close.
+        // In order to do this emit signal 'closeThread'
+        emit closeThread();
+    }
 }
 
 
 void SenderWorker::onInterruptSending(QUuid id){
-    qDebug() << "SenderWorker: onInterruptSending-> " + id.toString();
+    //qDebug() << "SenderWorker: onInterruptSending-> " + id.toString();
     if(this->id == id){
+        atomicFlag = 1;
+        if(file->isOpen()){
+            file->close();
+        }
+
         closeConnection();
 
-        on_disconnected();
+        //on_disconnected();
     }
 }
 
@@ -139,13 +189,17 @@ void SenderWorker::on_disconnected(){
     qDebug() << "SenderWorker: SOCKET DISCONNECTED!";
     //close window
 
+    if(file->isOpen()){
+        file->close();
+    }
+
     //close thread
     emit closeThread();
 }
 
 void SenderWorker::closeConnection(){
     qDebug() << "SenderWorker: Closing socket!";
-    qDebug() << &"SenderWorker: socket state = " [ tcpSocket->state()];
+
     if(tcpSocket->state() == QAbstractSocket::ClosingState){
         qDebug() << "SenderWorker: Socket ALREADY closed!!";
     }

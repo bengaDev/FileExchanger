@@ -22,14 +22,17 @@ public slots:
     void metadataStageSTART();
     void pathSelectionSTART(QString);
     void dataStageSTART();
+    void receivingStep();
 
     void onInterruptReceiving(QUuid);
+    void on_disconnected();
     void closeConnection();
 
 private:
     Data_Manager* dm;
     QTcpSocket* tcpSocket;
     QFile *file;
+    QByteArray fileBuffer;
 
     QByteArray sentData;
     QPixmap avatar;
@@ -40,7 +43,7 @@ private:
     QString fileName;
     QString uniqueID;
 
-
+    QAtomicInt atomicFlag = 0;
 };
 
 #endif // RECEIVERWORKER_H
