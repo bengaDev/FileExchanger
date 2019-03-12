@@ -118,6 +118,7 @@ void MainWindow::addReceiverProgBar(QUuid id, QString senderName){
 
     receiverWindow = new WindowProgressBar(this, dataManager);
     receiverWindow->setWindowTitle("Receiving file");
+    receiverWindow->setAttribute(Qt::WA_DeleteOnClose);
 
     receiverWindow->addProgessBars_ReceivingFrom(id, senderName);
 

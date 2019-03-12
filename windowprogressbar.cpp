@@ -142,6 +142,7 @@ void WindowProgressBar::onSetValueProgBar(QUuid id, qint64 val){
 
 void WindowProgressBar::closeEvent(QCloseEvent *e){
     this->close();
+    this->disconnect();
 }
 
 void WindowProgressBar::DEBUG_destroyedSlot(){
