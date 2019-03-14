@@ -134,6 +134,26 @@ QString Data_Manager::getFileName(){
     return fileName;
 }
 
+void Data_Manager::setFilePath(QString path, bool isDir){
+    this->isDir = isDir;
+
+    if(filePath !=nullptr){
+        this->filePath = path;
+
+        QStringList tokens;
+        tokens = this->filePath.split("/");
+
+        this->fileName = tokens.last();
+        qDebug() << "DataManager: FileName : " << fileName;
+
+        emit sendNewFile(fileName);
+    }
+}
+
+bool Data_Manager::getIsDir(){
+    return this->isDir;
+}
+
 void Data_Manager::refreshOnlineUsers(){
     time_t currentTime = time(nullptr);
 

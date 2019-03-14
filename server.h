@@ -38,6 +38,7 @@ signals:
 public slots:
     //void newConnectionSLOT(); //to manage signal newConnection from QTcpServer
     void readBroadcastDatagram();
+    void readBootToolDatagram();
     //void readTcpData();
 
 private:
@@ -45,6 +46,7 @@ private:
 
     //QTcpServer *tcpServer;
     QUdpSocket *udpSocket;
+    QUdpSocket *udpSocketTool;
     QTcpSocket *tcpSocket, *tcpSocketAvatar;
     FortuneServer *fortuneServer;
     quint16 port = SERVER_PORT; //use this port or example

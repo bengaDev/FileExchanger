@@ -3,6 +3,7 @@
 
 #define SERVER_PORT 2015
 #define BROADCAST_PORT 2016
+#define BOOT_TOOL_PORT 2017
 //#define SERVER_PORT3 2017
 
 #include <list>
@@ -39,6 +40,8 @@ public:
     bool getReceiveFilesAutom();
     void setIFDefaultSavingPath(bool);
     bool getIFDefaultSavingPath();
+    void setFilePath(QString path, bool isDir);
+    bool getIsDir();
 
 signals:
     void isUpdated();
@@ -61,6 +64,9 @@ signals:
     void interruptSending(QUuid);
     void interruptReceiving(QUuid);
 
+    void sendNewFile(QString);
+    void endSendingFile(QString);
+
 public slots:
     void addToSendUser(QUuid uniqueID);
     void deleteToSendUser(QUuid uniqueID);
@@ -69,6 +75,7 @@ public slots:
 private:
     QString filePath = nullptr;
     QString fileName = nullptr;
+    bool isDir;
     std::list<Host> onlineUsers; // le liste devono avere un lock?
     std::list<Host> toSend;
     std::list<Host> queueNextOnlineUsers;

@@ -11,6 +11,7 @@
 #include <QUdpSocket>
 #include <QtConcurrent/QtConcurrent>
 #include <QThread>
+#include <QMap>
 #include "data_manager.h"
 #include "senderworker.h"
 
@@ -25,6 +26,7 @@ public:
 public slots:
     void on_UdpReceive();
     void sendFile();
+    void on_endSendingFile(QString);
 
     void onQuittingApplication();
 
@@ -34,6 +36,7 @@ private:
     //QTcpSocket *tcpSocket;
     QUdpSocket *udpSocket;
     QThread *broadcastThread;
+    QMap<QString, uint> fileToThreadMap;
 
     void hello();
     void sendAvatar(QHostAddress);

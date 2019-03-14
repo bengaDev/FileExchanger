@@ -4,6 +4,7 @@ SenderWorker::SenderWorker(Data_Manager* dm,QUuid id, QHostAddress addr)
 {
     this->dm = dm;
     this->id = id;
+    this->filePath = dm->getFilePath();
 
     tcpSocket = new QTcpSocket(this);
 
@@ -29,7 +30,7 @@ SenderWorker::SenderWorker(Data_Manager* dm,QUuid id, QHostAddress addr)
 void SenderWorker::sendMetaData(){
     qDebug() << "SenderWorker: sending Meta-Data";
 
-    file = new QFile(dm->getFilePath());
+    file = new QFile(filePath);
 
     if(file->open(QIODevice::ReadOnly) == false){
         qDebug() << "SenderWorker: " << "Error opening File";
@@ -164,13 +165,13 @@ void SenderWorker::sendingStep(){
 
         // At this point file is sended, and thread should close.
         // In order to do this emit signal 'closeThread'
-        emit closeThread();
+        closingThread();
     }
 }
 
 
 void SenderWorker::onInterruptSending(QUuid id){
-    //qDebug() << "SenderWorker: onInterruptSending-> " + id.toString();
+    // cancel button pressed
     if(this->id == id){
         atomicFlag = 1;
         if(file->isOpen()){
@@ -184,6 +185,7 @@ void SenderWorker::onInterruptSending(QUuid id){
 
 
 void SenderWorker::on_disconnected(){
+    // socket disconnected
     qDebug() << "SenderWorker: SOCKET DISCONNECTED!";
     //close window
 
@@ -192,7 +194,7 @@ void SenderWorker::on_disconnected(){
     }
 
     //close thread
-    emit closeThread();
+    closingThread();
 }
 
 void SenderWorker::closeConnection(){
@@ -203,6 +205,11 @@ void SenderWorker::closeConnection(){
     }
     tcpSocket->close(); // automatically calls tcpSocket->disconnectFromHost();
 
+    closingThread();
+}
+
+void SenderWorker::closingThread(){
+    emit dm->endSendingFile(filePath);
     emit closeThread();
 }
 

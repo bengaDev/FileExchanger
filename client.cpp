@@ -39,6 +39,8 @@ Client::Client(Data_Manager *dm, QObject *parent) :
 
     connect(dm, SIGNAL(quittingApplication()), this, SLOT(onQuittingApplication()));
 
+    connect(dm, SIGNAL(endSendingFile()), this, SLOT(on_endSendingFile()));
+
     QtConcurrent::run(this, &Client::hello);
 
 
@@ -164,6 +166,12 @@ void Client::sendFile(){
     std::list<Host> toSendUsers = dm->getToSendUsers();
 
     if(!toSendUsers.empty()){
+
+        if(dm->getIsDir()){
+            // if it is a directory save the number of thread created
+            fileToThreadMap.insert(dm->getFilePath(), toSendUsers.size());
+        }
+
         for(std::list<Host>::iterator it = toSendUsers.begin(); it != toSendUsers.end(); it++){
             qDebug() << "CLient: starting a new worker";
 
@@ -181,9 +189,26 @@ void Client::sendFile(){
             senderThread->start();
 
         }
+
         dm->deleteAllToSendUsers();
     }
 }
+
+void Client::on_endSendingFile(QString filePath){
+
+    if(fileToThreadMap.contains(filePath)){
+        fileToThreadMap.find(filePath).value() -= 1;
+
+        if(fileToThreadMap.find(filePath).value() == 0){
+            // need to delete .zip file
+            QFile fileToDelete(filePath);
+            if(!fileToDelete.remove()){
+                qDebug() << "Client: Error in deleting file";
+            }
+        }
+    }
+}
+
 /*
 void Client::sendMetadataToUser(Host h){
     // -------------------------

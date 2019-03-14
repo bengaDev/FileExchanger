@@ -34,6 +34,7 @@ private:
     //QHostAddress addr;
     QTcpSocket* tcpSocket;
 
+    QString filePath;
     QFile* file;
     static const int PayloadSize = 1 * 1024; // 64 KB
 
@@ -42,6 +43,7 @@ private:
     QAtomicInt atomicFlag = 0;
 
     void closeConnection();
+    void closingThread();
 };
 
 #endif // SENDERWORKER_H

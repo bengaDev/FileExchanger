@@ -19,6 +19,20 @@ Server::Server(Data_Manager *dm, QObject *parent) :
     connect(udpSocket, SIGNAL(readyRead()), this, SLOT(readBroadcastDatagram()));
 
 
+    // ======== Boot Tool UDP RECEIVE ========
+    udpSocketTool = new QUdpSocket(this);
+    // 'ShareAddress' allows other services to bind to the same address and port
+    // In order to have exclusive binding of port and address in this "service", use: 'DontShareAddress'
+    if(!udpSocketTool->bind(QHostAddress::LocalHost, BOOT_TOOL_PORT, QUdpSocket::ShareAddress)){
+        // UDP listener of server could not start
+        qDebug() << "Server: UDP listener could not start!";
+    } else {
+        // UDP listener started
+        qDebug() << "Server: UDP listener started!";
+    }
+    connect(udpSocketTool, SIGNAL(readyRead()), this, SLOT(readBootToolDatagram()));
+
+
     // ======== TCP CONNECTIONS ========
     //tcpServer = new QTcpServer(this);
 
@@ -94,40 +108,34 @@ void Server::readBroadcastDatagram(){
     }
 }
 
-/*
-void Server::newConnectionSLOT() //action performed each timen a new connection arrives
-{
-    //QTcpSocket *socket = tcpServer->nextPendingConnection();
-    QByteArray sentData;
+void Server::readBootToolDatagram(){ // main thread
+    QByteArray datagram;
+    QString datagramString;
+    QStringList datagramTokens;
 
-    qintptr socketDescriptor = tcpServer->nextPendingConnection()->socketDescriptor();
+    qDebug() << "Server: received BootToolDatagram!";
 
-    QtConcurrent::run(this->readTcpData, socketDescriptor);
+    while (udpSocketTool->hasPendingDatagrams()) {
+        datagram.resize(int(udpSocketTool->pendingDatagramSize()));
+        udpSocketTool->readDatagram(datagram.data(), datagram.size());
 
+        datagramString = QString(datagram);
 
+        if(datagram.startsWith("BootTool isDir")){
+            qDebug() << "Server: received datagram with basic info -- UDP";
+            datagramTokens = datagramString.split("?");
+            if(datagramTokens[1] == "YES"){
+                qDebug() << "RECEIVED A DIR PATH " + datagramTokens[2];
+
+                dm->setFilePath(datagramTokens[2], true);
+
+            }else if(datagramTokens[1] == "NO"){
+                qDebug() << "RECEIVED A FILE PATH " + datagramTokens[2];
+
+                dm->setFilePath(datagramTokens[2], false);
+            }
+
+        }
+    }
 }
 
-void Server::readTcpData(qintptr socketDescriptor){
-
-    QByteArray sentData;
-
-    QTcpSocket tcpSocket;
-
-    if (!tcpSocket.setSocketDescriptor(socketDescriptor)) {
-        //emit error(tcpSocket.error());
-        qDebug() << "Server: error in opening socket thorugh 'socketDescriptor' - Threaded";
-        return;
-    }
-
-
-    tcpSocket.waitForReadyRead(5000);
-
-    sentData = tcpSocket.readAll();
-
-    if(sentData.startsWith("avatar")){
-        qDebug() << "Avatar received";
-        tcpSocket.disconnectFromHost();
-    }
-
-}
-*/
