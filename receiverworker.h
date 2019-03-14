@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QThread>
 #include <QTcpSocket>
+#include <QStandardPaths>
 #include "data_manager.h"
 
 

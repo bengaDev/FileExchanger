@@ -92,7 +92,7 @@ void ReceiverWorker::metadataStageSTART(){
 void ReceiverWorker::pathSelectionSTART(QString path){
 
     if(dm->getIFDefaultSavingPath() == true){
-        file = new QFile("./" + fileName);
+        file = new QFile( QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) + "/" + fileName);
     }
     else{
         file = new QFile(path + "/" + fileName);
