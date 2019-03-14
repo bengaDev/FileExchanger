@@ -189,6 +189,11 @@ void ReceiverWorker::receivingStep(){
         // At this point file is received, and thread should close.
         // In order to do this emit signal 'closeThread'
 
+        tcpSocket->write("ACK");
+        if(!tcpSocket->waitForBytesWritten(5000)){
+            qDebug() << "Receiver Worker: ERROR -> ACK not sended!";
+        }
+
         emit closeThread();
     }
 

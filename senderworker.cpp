@@ -24,6 +24,7 @@ SenderWorker::SenderWorker(Data_Manager* dm,QUuid id, QHostAddress addr)
     //connect(tcpSocket, SIGNAL(stateChanged()), this, SLOT(DEBUG_socketStateChanged()));
 
     connect(tcpSocket, SIGNAL(disconnected()), this, SLOT(on_disconnected()));
+
 }
 
 
@@ -78,8 +79,9 @@ void SenderWorker::checkResponse(){
 
     if(response == "YES"){
         sendFile();
-    }else{
-        qDebug() << "SenderWorker: closing connection";
+    }else if(response == "ACK"){
+        qDebug() << "SenderWorker: Received ACK, closing thread";
+        closingThread();
     }
 }
 
@@ -165,7 +167,9 @@ void SenderWorker::sendingStep(){
 
         // At this point file is sended, and thread should close.
         // In order to do this emit signal 'closeThread'
-        closingThread();
+        // before closing wait for Ack from receiver
+
+        //closingThread();
     }
 }
 
@@ -203,12 +207,12 @@ void SenderWorker::closeConnection(){
     if(tcpSocket->state() == QAbstractSocket::ClosingState){
         qDebug() << "SenderWorker: Socket ALREADY closed!!";
     }
-    tcpSocket->close(); // automatically calls tcpSocket->disconnectFromHost();
 
     closingThread();
 }
 
 void SenderWorker::closingThread(){
+    tcpSocket->close();
     emit dm->endSendingFile(filePath);
     emit closeThread();
 }
