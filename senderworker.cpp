@@ -140,7 +140,7 @@ void SenderWorker::sendingStep(){
         // If the number of bytes waiting to be written is > 4*PayloadSize
         //      then don't write anything, and wait untill this number decreases
         //      to start writing again
-        if(tcpSocket->bytesToWrite() <= 4*PayloadSize){
+        if(tcpSocket->bytesToWrite() <= 10*PayloadSize){
 
             buffer = file->read(PayloadSize);
 

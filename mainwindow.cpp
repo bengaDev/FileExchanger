@@ -101,6 +101,7 @@ void MainWindow::onShareButton(){
     if(!toSendUsers.empty()){
         sendingWindow = new WindowProgressBar(this, dataManager);
         sendingWindow->setWindowTitle("Sending File");
+        sendingWindow->setAttribute(Qt::WA_DeleteOnClose);
 
         sendingWindow->addProgressBars_SendTo(toSendUsers);
         //sendingWindow->addAllProgressBars(toSendUsers);

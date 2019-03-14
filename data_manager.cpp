@@ -136,11 +136,13 @@ QString Data_Manager::getFileName(){
 
 void Data_Manager::setFilePath(QString path, bool isDir){
     this->isDir = isDir;
+    path.replace("\\", "/");
 
     if(filePath !=nullptr){
         this->filePath = path;
 
         QStringList tokens;
+
         tokens = this->filePath.split("/");
 
         this->fileName = tokens.last();

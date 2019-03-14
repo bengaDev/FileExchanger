@@ -9,24 +9,25 @@ void sendPath(QString path, QString isDir);
 
 int main(int argc, char *argv[])
 {
-    //QCoreApplication a(argc, argv);
+    QCoreApplication a(argc, argv);
 
-    QString path = "C:/Users/nunxy/QT_ContextMenuAPP/contextMenuApp";
-/*
+    QString path;// = "C:/Users/nunxy/QT_ContextMenuAPP/contextMenuApp";
+    QString appPath = QCoreApplication::applicationDirPath();
+
     for (int i = 1; i < argc; ++i){
         path.append(QString(argv[i]));
         if(i < argc - 1){
             path.append(" ");
         }
     }
-*/
+
     // Understand if path is directory or file
     QFileInfo outputPath(path);
 
     if(outputPath.isDir()){
         // ZIP directory and send path of zipped file to main app
 
-        QString zipFile("./" + outputPath.baseName() + ".zip");
+        QString zipFile(appPath + "/" + outputPath.baseName() + ".zip");
 
         if(JlCompress::compressDir(zipFile, path)){
             qDebug() << "Complete";
