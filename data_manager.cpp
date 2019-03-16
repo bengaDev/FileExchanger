@@ -15,14 +15,14 @@ Data_Manager::Data_Manager(QString localHostName, QString filePath)
     }
 }
 
-void Data_Manager::addOnlineUser(Host newHost){
+void Data_Manager::addOnlineUser(Host newHost){ //called by setAvatarOfNextOnlineUser, that has already a mutex
     onlineUsers.push_back(newHost);
     emit isUpdated();
 }
 
 void Data_Manager::deleteOnlineUser(QUuid hostID){
     // Comparison is done with the unique ID (operator overload == in 'Host' class)
-
+    mutex.lock();
     qDebug() << "DELETE entered....";
 
     std::list<Host>::iterator it;
@@ -33,14 +33,17 @@ void Data_Manager::deleteOnlineUser(QUuid hostID){
             it = onlineUsers.erase(it);
 
     }
-
+    mutex.unlock();
     emit isUpdated();
 
 }
 
 
 std::list<Host> Data_Manager::getOnlineUsers(){
-    return onlineUsers;
+    mutex.lock();
+    std::list<Host> tmp = onlineUsers;
+    mutex.unlock();
+    return tmp;
 }
 
 std::list<Host> Data_Manager::getToSendUsers(){
@@ -85,11 +88,13 @@ bool Data_Manager::isPresentInToSendUsers(QUuid id){
 }
 
 void Data_Manager::addToSendUser(QUuid uniqueID){
+    mutex.lock(); //used for onlineUser lock access
     for(std::list<Host>::iterator it = onlineUsers.begin(); it != onlineUsers.end(); it++){
         if(!isPresentInToSendUsers(uniqueID) && it->getUniqueID() == uniqueID){
             toSend.push_back(*it);
         }
     }
+    mutex.unlock();
 }
 
 void Data_Manager::deleteToSendUser(QUuid uniqueID){
@@ -165,6 +170,8 @@ void Data_Manager::refreshOnlineUsers(){
     std::list<Host>::iterator it;
     bool isModified = false;
 
+    mutex.lock();
+
     for(it = onlineUsers.begin(); it != onlineUsers.end(); it++){
         qDebug() << "TIME in refresh online = " << difftime(currentTime, it->getLastSeen());
 
@@ -175,6 +182,8 @@ void Data_Manager::refreshOnlineUsers(){
         }
     }
 
+    mutex.unlock();
+
     if(isModified)
         emit isUpdated();
 }
@@ -184,6 +193,7 @@ uint Data_Manager::getRefreshTime(){
 }
 
 void Data_Manager::updateHostInfo(QUuid uniqueID, time_t time, QString name){
+    mutex.lock();
     for(Host &tmp : onlineUsers){
         if(tmp.getUniqueID() == uniqueID){
             tmp.setLastSeen(time);
@@ -193,6 +203,7 @@ void Data_Manager::updateHostInfo(QUuid uniqueID, time_t time, QString name){
             }
         }
     }
+    mutex.lock();
 }
 
 

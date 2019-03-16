@@ -19,7 +19,6 @@ class Data_Manager : public QObject
 public:
     Data_Manager(QString localHostName, QString fileName);
     Host *localHost;
-    void addOnlineUser(Host newHost);
     void deleteOnlineUser(QUuid hostID);
     void deleteAllToSendUsers();
     bool isPresentInOnlineUsers(QUuid);
@@ -78,7 +77,7 @@ private:
     QString filePath = nullptr;
     QString fileName = nullptr;
     bool isDir;
-    std::list<Host> onlineUsers; // le liste devono avere un lock?
+    std::list<Host> onlineUsers;
     std::list<Host> toSend;
     std::list<Host> queueNextOnlineUsers;
     uint refreshTime = 10;
@@ -87,6 +86,8 @@ private:
 
     QMutex mutex;
     //std::string file_path;
+
+    void addOnlineUser(Host newHost);
 };
 
 

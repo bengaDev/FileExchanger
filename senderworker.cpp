@@ -1,11 +1,12 @@
 #include "senderworker.h"
 
-SenderWorker::SenderWorker(Data_Manager* dm,QUuid id, QHostAddress addr, QString name)
+SenderWorker::SenderWorker(Data_Manager* dm,QUuid id, QHostAddress addr, QString nameSendingTo)
 {
     this->dm = dm;
     this->id = id;
-    this->nameSendingTo = name;
+    this->nameSendingTo = nameSendingTo;
     this->filePath = dm->getFilePath();
+    this->fileName = dm->getFileName();
 
     tcpSocket = new QTcpSocket(this);
 
@@ -47,7 +48,7 @@ void SenderWorker::sendMetaData(){
 
     out << TotalBytes; // Size of file
     out << "incoming file from " + dm->localHost->getUniqueID().toByteArray();
-    out << dm->getFileName();
+    out << fileName;
     out << dm->localHost->getName();
 
     // Send first packet: metadata

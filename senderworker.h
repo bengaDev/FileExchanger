@@ -36,6 +36,7 @@ private:
     QTcpSocket* tcpSocket;
 
     QString filePath;
+    QString fileName;
     QFile* file;
     static const int PayloadSize = 1 * 1024; // 64 KB
 
