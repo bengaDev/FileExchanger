@@ -90,15 +90,36 @@ void ReceiverWorker::metadataStageSTART(){
 }
 
 void ReceiverWorker::pathSelectionSTART(QString path){
+    QString uniqueFileName;
 
     if(dm->getIFDefaultSavingPath() == true){
-        file = new QFile( QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) + "/" + fileName);
+        uniqueFileName = getCorrectFileName( QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) );
+        file = new QFile( uniqueFileName );
     }
     else{
-        file = new QFile(path + "/" + fileName);
+        uniqueFileName = getCorrectFileName(path);
+        file = new QFile( uniqueFileName );
     }
     dataStageSTART();
 
+}
+
+QString ReceiverWorker::getCorrectFileName(QString path){
+    QString completeFileName = path + "/" + fileName;
+    QFileInfo tmpFile(path + "/" + fileName);
+
+    if(tmpFile.exists()){
+        // change fileName in file(counter).extension
+        uint counter = 0;
+        QString tmpBaseName = tmpFile.completeBaseName();
+        while(tmpFile.exists()){
+            counter += 1;
+            completeFileName = tmpFile.path() + "/" + tmpBaseName + "(" + QString::number(counter) + ")." + tmpFile.completeSuffix();
+            tmpFile = QFileInfo(completeFileName);
+        }
+        fileName = tmpFile.fileName();
+    }
+    return completeFileName;
 }
 
 void ReceiverWorker::dataStageSTART(){

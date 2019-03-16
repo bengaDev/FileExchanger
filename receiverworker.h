@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QThread>
 #include <QTcpSocket>
+#include <QFileInfo>
 #include <QStandardPaths>
 #include "data_manager.h"
 
@@ -45,6 +46,8 @@ private:
     QString uniqueID;
 
     QAtomicInt atomicFlag = 0;
+
+    QString getCorrectFileName(QString completePath);
 };
 
 #endif // RECEIVERWORKER_H
