@@ -39,8 +39,6 @@ public:
 private slots:
     void on_activateMainWindow(QString);
     void updateAvatarVisible();
-    void DEBUG_addToDataManager();
-    void DEBUG_clearDataManager();
     void addUuidToSend_SLOT(QUuid);
     void deleteUuidToSend_SLOT(QUuid);
     void onShareButton();

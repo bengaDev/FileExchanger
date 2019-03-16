@@ -133,15 +133,6 @@ void MainWindow::addReceiverProgBar(QUuid id, QString senderName){
 
 }
 
-void MainWindow::DEBUG_addToDataManager(){
-    Host temp = *(dataManager->localHost);
-    dataManager->addOnlineUser(temp);
-}
-void MainWindow::DEBUG_clearDataManager(){
-    dataManager->DEBUG_clearOnlineUsers();
-    //ui->ListCounter->setText(QString::number(onlineUsersGUI->size()));
-}
-
 // This SLOT will be called when 'onlineUsers' in 'dataManager' is updated /
 // when the SIGNAL 'isUpdated()' is called
 void MainWindow::updateAvatarVisible(){
