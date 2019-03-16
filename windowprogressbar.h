@@ -21,7 +21,7 @@ class WindowProgressBar : public QDialog
 
 public:
     explicit WindowProgressBar(QWidget *parent = nullptr, Data_Manager* dm = nullptr);
-    ~WindowProgressBar();
+    ~WindowProgressBar() override;
 
     void addProgressBars_SendTo(std::list<Host> toSendUsers);
     void addProgessBars_ReceivingFrom(QUuid, QString);

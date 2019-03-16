@@ -199,7 +199,11 @@ void SenderWorker::on_disconnected(){
         file->close();
     }
 
-    dm->setLabelProgBarWindow(id, nameSendingTo + " interrupted transfer, or connection lost");
+    if(atomicFlag == 0){
+        dm->setLabelProgBarWindow(id, nameSendingTo + " interrupted transfer, or connection lost");
+    }
+
+    atomicFlag = 1;
 
     //close thread
     closingThread();

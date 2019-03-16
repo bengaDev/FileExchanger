@@ -57,7 +57,6 @@ MainWindow::MainWindow(QWidget *parent, Data_Manager* dM) :
     ///dataManager->addOnlineUser(h1);
     ///dataManager->deleteOnlineUser(h1);
 
-    this->hide();
 }
 
 void MainWindow::messageBoxYES_NO(qint64 fileSize, QString fileName, QUuid id, QString senderName){

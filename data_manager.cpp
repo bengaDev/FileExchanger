@@ -199,11 +199,13 @@ void Data_Manager::updateHostInfo(QUuid uniqueID, time_t time, QString name){
             tmp.setLastSeen(time);
             if(tmp.getName() != name){
                 tmp.setName(name);
+                mutex.unlock();
                 emit isUpdated();
+                return;
             }
         }
     }
-    mutex.lock();
+    mutex.unlock();
 }
 
 
