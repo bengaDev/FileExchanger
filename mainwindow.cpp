@@ -17,7 +17,7 @@ MainWindow::MainWindow(QWidget *parent, Data_Manager* dM) :
 
     QMainWindow::setVisible(true);
     QIcon *icon = new QIcon(":/Icon_IMG/shareIMG.png");
-    setWindowTitle("Hello");
+    setWindowTitle("File Exchanger");
     if(icon != nullptr){
         setWindowIcon(QIcon(":/Icon_IMG/shareIMG.png"));
     }
@@ -28,7 +28,7 @@ MainWindow::MainWindow(QWidget *parent, Data_Manager* dM) :
 
     flowLayout_ScrollArea = new FlowLayout();
 
-    ui->BackBtn->setStyleSheet("QPushButton:hover{background-color: yellow}");
+    //ui->BackBtn->setStyleSheet("QPushButton:hover{background-color: yellow}");
 
     // ============================
 
@@ -52,6 +52,8 @@ MainWindow::MainWindow(QWidget *parent, Data_Manager* dM) :
     // Connections for GUI receiver side
     connect(dataManager, SIGNAL(metadataStageEND(qint64, QString, QUuid, QString)), this, SLOT(messageBoxYES_NO(qint64, QString, QUuid, QString)));
 
+    // Connect for Main Window activation
+    connect(dataManager, SIGNAL(activateMainWindow(QString)), this, SLOT(on_activateMainWindow(QString)));
     ///dataManager->addOnlineUser(h1);
     ///dataManager->deleteOnlineUser(h1);
 
@@ -60,6 +62,7 @@ MainWindow::MainWindow(QWidget *parent, Data_Manager* dM) :
 void MainWindow::messageBoxYES_NO(qint64 fileSize, QString fileName, QUuid id, QString senderName){
 
     QString filePath;
+    double fileSizeKB = fileSize/1024.0;
     if(dataManager->getReceiveFilesAutom() == true){
         if(dataManager->getIFDefaultSavingPath() == true){
             emit dataManager->savingPath("./");
@@ -74,7 +77,7 @@ void MainWindow::messageBoxYES_NO(qint64 fileSize, QString fileName, QUuid id, Q
     else {
         QMessageBox::StandardButton reply;
         reply = QMessageBox::question(this, "Incoming file", "Do you want to accept file '"
-                                      + fileName + "' of size " + fileSize + "bytes?", QMessageBox::Yes|QMessageBox::No);
+                                      + fileName + "' of size " + QString::number(fileSizeKB) + " KB?", QMessageBox::Yes|QMessageBox::No);
 
         if(reply == QMessageBox::Yes){
             if(dataManager->getIFDefaultSavingPath() == true){
@@ -135,7 +138,7 @@ void MainWindow::DEBUG_addToDataManager(){
 }
 void MainWindow::DEBUG_clearDataManager(){
     dataManager->DEBUG_clearOnlineUsers();
-    ui->ListCounter->setText(QString::number(onlineUsersGUI->size()));
+    //ui->ListCounter->setText(QString::number(onlineUsersGUI->size()));
 }
 
 // This SLOT will be called when 'onlineUsers' in 'dataManager' is updated /
@@ -162,8 +165,6 @@ void MainWindow::updateAvatarVisible(){
         onlineUsersGUI->push_back(container);
 
         flowLayout_ScrollArea->addWidget(onlineUsersGUI->last());
-
-        ui->ListCounter->setText(QString::number(onlineUsersGUI->size()));
     }
 
 
@@ -190,7 +191,6 @@ ContainerGUI* MainWindow::fromHost_to_Container(Host h){
 
 void MainWindow::addUuidToSend_SLOT(QUuid ID){
     dataManager->addToSendUser(ID);
-    ui->ListCounter->setText(QString::number(ui->ListCounter->text().toInt()+1));
 }
 
 void MainWindow::deleteUuidToSend_SLOT(QUuid ID){
@@ -266,6 +266,17 @@ void MainWindow::createTrayIcon(){
     trayIcon->setIcon(QIcon(":/Icon_IMG/shareIMG.png"));
     trayIcon->setVisible(true);
     // -------------------------------------------------------------------------------
+}
+
+void MainWindow::on_activateMainWindow(QString fileName){
+    if(!this->isVisible()){
+        ui->sendFileLabel->setText("Sending file: " + fileName);
+        this->show();
+    }
+}
+
+void MainWindow::onBackButton(){
+    this->hide();
 }
 
 void MainWindow::onQuitAction(){

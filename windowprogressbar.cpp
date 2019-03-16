@@ -13,6 +13,7 @@ WindowProgressBar::WindowProgressBar(QWidget *parent, Data_Manager *dm) :
     ui->scrollArea->widget()->setLayout(vLayout_ScrollArea);
 
     //connect(this, SIGNAL(destroyed(QObject*)), dm, SLOT(DEBUG_trySlot(QObject*)));
+    connect(dm, SIGNAL(setLabelProgBarWindow(QUuid, QString)), this, SLOT(onSetLabel(QUuid, QString)), Qt::QueuedConnection);
 
 
 }
@@ -137,6 +138,15 @@ void WindowProgressBar::onSetValueProgBar(QUuid id, qint64 val){
         progBar->setValue(val);
     } else{
         qDebug() << "ERROR! NOT VALID ID in onSetValueProgBar";
+    }
+}
+
+void WindowProgressBar::onSetLabel(QUuid id, QString stringLabel){
+    if(progressBarMap.find(id) != progressBarMap.end()){
+        QWidget* container = progressBarMap.find(id).value();
+        QLabel* label = container->findChild<QLabel*>();
+
+        label->setText(stringLabel);
     }
 }
 

@@ -135,6 +135,8 @@ void Server::readBootToolDatagram(){ // main thread
                 dm->setFilePath(datagramTokens[2], false);
             }
 
+            emit dm->activateMainWindow(dm->getFileName());
+
         }
     }
 }

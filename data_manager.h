@@ -45,11 +45,13 @@ public:
 
 signals:
     void isUpdated();
+    void activateMainWindow(QString fileName);
     void sendFile_SIGNAL();
     void setProgBarMaximum_SENDER(QUuid, qint64);
     void setProgBarValue_SENDER(QUuid, qint64);
     void setProgBarMaximum_RECEIVER(QUuid, qint64);
     void setProgBarValue_RECEIVER(QUuid, qint64);
+    void setLabelProgBarWindow(QUuid, QString);
     void closeSocket();
 
     // Signals for GUI-ReceiverWorker communication

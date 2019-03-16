@@ -74,7 +74,6 @@ void ReceiverWorker::metadataStageSTART(){
     else if(sentData.startsWith("incoming file from ")){
         fileSize = msgSize;
 
-        QString senderName;
         QString data(sentData);
         data.remove("incoming file from {");
         data.remove("}");
@@ -208,6 +207,7 @@ void ReceiverWorker::onInterruptReceiving(QUuid id){
         if(file->isOpen()){
             file->remove();
         }
+        dm->setLabelProgBarWindow(id, "Transfer from " + senderName + " was canceled by user");
         closeConnection();
     }
 }
@@ -219,6 +219,7 @@ void ReceiverWorker::on_disconnected(){
     if(file != nullptr && file->isOpen()){
         file->remove();
     }
+    dm->setLabelProgBarWindow(uniqueID, senderName + " interrupted transfer, or connection lost");
 
     //close thread
     emit closeThread();
