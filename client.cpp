@@ -177,7 +177,7 @@ void Client::sendFile(){
 
             ///CREATES A NEW SENDER WORKER FOR EACH USER///
             QThread *senderThread = new QThread;
-            SenderWorker *senderWorker = new SenderWorker(dm, it->getUniqueID(), it->getIP());
+            SenderWorker *senderWorker = new SenderWorker(dm, it->getUniqueID(), it->getIP(), it->getName());
             senderWorker->moveToThread(senderThread);
 
             //add connects to manage thread closing

@@ -61,8 +61,7 @@ FORMS += \
     settingswindow.ui
 
 RESOURCES += \
-    systray.qrc \
-    systray.qrc
+    systray_1.qrc
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

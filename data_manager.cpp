@@ -106,6 +106,7 @@ void Data_Manager::deleteToSendUser(QUuid uniqueID){
 void Data_Manager::deleteAllToSendUsers(){
 
     toSend.clear();
+    emit isUpdated();
 }
 
 void Data_Manager::addQueueNextOnlineUsers(Host h){

@@ -44,6 +44,7 @@ private:
     qint64 receivedBytes = 0;
     QString fileName;
     QString uniqueID;
+    QString senderName;
 
     QAtomicInt atomicFlag = 0;
 

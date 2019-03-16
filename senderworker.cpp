@@ -1,9 +1,10 @@
 #include "senderworker.h"
 
-SenderWorker::SenderWorker(Data_Manager* dm,QUuid id, QHostAddress addr)
+SenderWorker::SenderWorker(Data_Manager* dm,QUuid id, QHostAddress addr, QString name)
 {
     this->dm = dm;
     this->id = id;
+    this->nameSendingTo = name;
     this->filePath = dm->getFilePath();
 
     tcpSocket = new QTcpSocket(this);
@@ -181,6 +182,7 @@ void SenderWorker::onInterruptSending(QUuid id){
         if(file->isOpen()){
             file->close();
         }
+        dm->setLabelProgBarWindow(id, "Transfer to " + nameSendingTo + " was canceled by user");
 
         closeConnection();
 
@@ -191,11 +193,12 @@ void SenderWorker::onInterruptSending(QUuid id){
 void SenderWorker::on_disconnected(){
     // socket disconnected
     qDebug() << "SenderWorker: SOCKET DISCONNECTED!";
-    //close window
-
+    //close window 
     if(file->isOpen()){
         file->close();
     }
+
+    dm->setLabelProgBarWindow(id, nameSendingTo + " interrupted transfer, or connection lost");
 
     //close thread
     closingThread();
