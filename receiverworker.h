@@ -51,6 +51,8 @@ private:
     QDataStream *in;
 
     QString getCorrectFileName(QString completePath);
+
+    void closingThread();
 };
 
 #endif // RECEIVERWORKER_H

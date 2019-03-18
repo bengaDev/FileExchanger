@@ -184,22 +184,22 @@ void ReceiverWorker::receivingStep(){
         fileBuffer.clear();
 
 
-        while(tcpSocket->bytesAvailable() < 64*1024){
+        while(tcpSocket->bytesAvailable() < 64 * 1024){
             // If waiting for more than 5 seconds, exit the inner 'while'
             // and check if this waiting is due to end of transmission (receivedBytes>fileSize)
             // or if it's just because of poor connection, in which case the program will
             // re-enter in this while
             if(!tcpSocket->waitForReadyRead(5000)){
+                qDebug() << "----------------receiverWorker waited more than 5sec";
                 break;
             }
         }  //64Kb are arrived now...
 
         *in >> fileBuffer;
         receivedBytes += fileBuffer.size();
-        emit dm->setProgBarValue_RECEIVER(uniqueID, receivedBytes);
-
         file->write(fileBuffer);
 
+        emit dm->setProgBarValue_RECEIVER(uniqueID, receivedBytes);
 
 
         QMetaObject::invokeMethod(this, "receivingStep", Qt::QueuedConnection);
@@ -220,7 +220,7 @@ void ReceiverWorker::receivingStep(){
 
         emit dm->setLabelProgBarWindow(uniqueID, "\"" + fileName + "\" received!");
 
-        emit closeThread();
+        closingThread();
     }
 
 }
@@ -298,14 +298,21 @@ void ReceiverWorker::on_disconnected(){
 
     atomicFlag = 1;
 
-    //close thread
-    emit closeThread();
+    closingThread();
 }
 
 void ReceiverWorker::closeConnection(){
-    tcpSocket->close();
-    qDebug() << "ReceiverWorker: SOCKET CLOSED!";
+    qDebug() << "ReceiverWorker: close Connection!";
+    closingThread();
+}
 
+void ReceiverWorker::closingThread(){
+    if(tcpSocket->state() != QAbstractSocket::ClosingState){
+        //tcpSocket->close();
+        qDebug() << "SenderWorker: Socket now closed!!";
+    }else{
+        qDebug() << "SenderWorker: Socket ALREADY closed!!";
+    }
     emit closeThread();
 }
 
