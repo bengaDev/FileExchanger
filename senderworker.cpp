@@ -154,7 +154,7 @@ void SenderWorker::sendFile(){
     */
 }
 
-void SenderWorker::sendingStep(){
+/*void SenderWorker::sendingStep(){
 
     if(atomicFlag == 1){
         // For interruptions
@@ -211,9 +211,9 @@ void SenderWorker::sendingStep(){
     //closingThread();
 
 }
+*/
 
-
-/*void SenderWorker::sendingStep(){
+void SenderWorker::sendingStep(){
 
     if(atomicFlag == 1){
         return;
@@ -246,7 +246,7 @@ void SenderWorker::sendingStep(){
             }
         }
         // Update progress bar
-        emit dm->setProgBarValue_SENDER(id, bytesWritten);
+        emit dm->setProgBarValue_SENDER(uniqueID, bytesWritten);
 
         offsetPartition += PAYLOAD_SIZE;
         QMetaObject::invokeMethod(this, "sendingStep", Qt::QueuedConnection);
@@ -261,7 +261,7 @@ void SenderWorker::sendingStep(){
 
     //closingThread();
 
-}*/
+}
 
 
 /*void SenderWorker::sendingStep(){

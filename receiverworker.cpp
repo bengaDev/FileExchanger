@@ -175,7 +175,7 @@ void ReceiverWorker::dataStageSTART(){
 */
 }
 
-void ReceiverWorker::receivingStep(){
+/*void ReceiverWorker::receivingStep(){
     if(atomicFlag == 1){
         return;
     }
@@ -190,9 +190,6 @@ void ReceiverWorker::receivingStep(){
             // and check if this waiting is due to end of transmission (receivedBytes>fileSize)
             // or if it's just because of poor connection, in which case the program will
             // re-enter in this while
-            if(receivedBytes > fileSize - 1024){
-                qDebug() << "----------------receiverWorker receivedBytes > fileSize - 1024";
-            }
             if(!tcpSocket->waitForReadyRead(10000) ){
                 qDebug() << "----------------receiverWorker waited more than 10sec";
                 qDebug() << "---------------- bytes Available " << tcpSocket->bytesAvailable();
@@ -233,8 +230,8 @@ void ReceiverWorker::receivingStep(){
     }
 
 }
-
-/*void ReceiverWorker::receivingStep(){
+*/
+void ReceiverWorker::receivingStep(){
     if(atomicFlag == 1){
         return;
     }
@@ -244,13 +241,15 @@ void ReceiverWorker::receivingStep(){
         fileBuffer.clear();
 
         // Wait untill incoming data amounts to >= 'PayloadSize' Bytes
-        while(tcpSocket->bytesAvailable() < 64*1024){
+        while(tcpSocket->bytesAvailable() < PAYLOAD_SIZE && (tcpSocket->bytesAvailable() + receivedBytes) != (fileSize + 4)){
             // If waiting for more than 5 seconds, exit the inner 'while'
             // and check if this waiting is due to end of transmission (receivedBytes>fileSize)
             // or if it's just because of poor connection, in which case the program will
             // re-enter in this while
-            if(!tcpSocket->waitForReadyRead(5000)){
-                break;
+            if(!tcpSocket->waitForReadyRead(10000)){
+                on_disconnected();
+
+                return;
             }
         }  //64Kb are arrived now...
         receivedBytes += tcpSocket->bytesAvailable();
@@ -280,7 +279,7 @@ void ReceiverWorker::receivingStep(){
         emit closeThread();
     }
 
-}*/
+}
 
 void ReceiverWorker::onInterruptAllReceiving(){
     onInterruptReceiving(this->uniqueID);
