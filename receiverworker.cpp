@@ -123,6 +123,8 @@ QString ReceiverWorker::getCorrectFileName(QString path){
 
 void ReceiverWorker::dataStageSTART(){
 
+    emit dm->setLabelProgBarWindow(uniqueID, "Receiving \"" + fileName + "\" from " + senderName);
+
     tcpSocket->write("YES");
     tcpSocket->waitForBytesWritten(30000);
 
@@ -134,6 +136,7 @@ void ReceiverWorker::dataStageSTART(){
         qDebug() << "File not opened correctly - RECEIVER";
     }
 
+    in = new QDataStream(tcpSocket);
     emit dm->setProgBarMaximum_RECEIVER(uniqueID, fileSize);
 
     QMetaObject::invokeMethod(this, "receivingStep", Qt::QueuedConnection);
@@ -180,6 +183,57 @@ void ReceiverWorker::receivingStep(){
     if(receivedBytes < fileSize){
         fileBuffer.clear();
 
+
+        while(tcpSocket->bytesAvailable() < 64*1024){
+            // If waiting for more than 5 seconds, exit the inner 'while'
+            // and check if this waiting is due to end of transmission (receivedBytes>fileSize)
+            // or if it's just because of poor connection, in which case the program will
+            // re-enter in this while
+            if(!tcpSocket->waitForReadyRead(5000)){
+                break;
+            }
+        }  //64Kb are arrived now...
+
+        *in >> fileBuffer;
+        receivedBytes += fileBuffer.size();
+        emit dm->setProgBarValue_RECEIVER(uniqueID, receivedBytes);
+
+        file->write(fileBuffer);
+
+
+
+        QMetaObject::invokeMethod(this, "receivingStep", Qt::QueuedConnection);
+    }else{
+        emit dm->setProgBarValue_RECEIVER(uniqueID, receivedBytes);
+
+        if(file->isOpen()){
+            file->close();
+        }
+
+        // At this point file is received, and thread should close.
+        // In order to do this emit signal 'closeThread'
+
+        tcpSocket->write("ACK");
+        if(!tcpSocket->waitForBytesWritten(5000)){
+            qDebug() << "Receiver Worker: ERROR -> ACK not sended!";
+        }
+
+        emit dm->setLabelProgBarWindow(uniqueID, "\"" + fileName + "\" received!");
+
+        emit closeThread();
+    }
+
+}
+
+/*void ReceiverWorker::receivingStep(){
+    if(atomicFlag == 1){
+        return;
+    }
+
+    // Keep reading from 'tcpSocket' untill all the bytes have been received
+    if(receivedBytes < fileSize){
+        fileBuffer.clear();
+
         // Wait untill incoming data amounts to >= 'PayloadSize' Bytes
         while(tcpSocket->bytesAvailable() < 64*1024){
             // If waiting for more than 5 seconds, exit the inner 'while'
@@ -217,7 +271,7 @@ void ReceiverWorker::receivingStep(){
         emit closeThread();
     }
 
-}
+}*/
 
 void ReceiverWorker::onInterruptReceiving(QUuid id){
     qDebug() << "SenderWorker: onInterruptReceived-> " + id.toString();
@@ -227,8 +281,8 @@ void ReceiverWorker::onInterruptReceiving(QUuid id){
         atomicFlag = 1;
         if(file->isOpen()){
             file->remove();
+            emit dm->setLabelProgBarWindow(id, "Transfer from " + senderName + " was canceled by user");
         }
-        dm->setLabelProgBarWindow(id, "Transfer from " + senderName + " was canceled by user");
         closeConnection();
     }
 }
@@ -239,8 +293,10 @@ void ReceiverWorker::on_disconnected(){
 
     if(file != nullptr && file->isOpen()){
         file->remove();
+        emit dm->setLabelProgBarWindow(uniqueID, senderName + " interrupted transfer, or connection lost");
     }
-    dm->setLabelProgBarWindow(uniqueID, senderName + " interrupted transfer, or connection lost");
+
+    atomicFlag = 1;
 
     //close thread
     emit closeThread();

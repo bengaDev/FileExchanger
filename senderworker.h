@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QThread>
 #include <QTcpSocket>
+#include <QBuffer>
 #include "data_manager.h"
 
 class SenderWorker : public QObject
@@ -38,11 +39,18 @@ private:
     QString filePath;
     QString fileName;
     QFile* file;
-    static const int PayloadSize = 1 * 1024; // 64 KB
+    QByteArray filePartition;
+    int offsetPartition = 0;
+    bool allPartitionsSent = false;
+    //qint64 bytesWritten_Partitions = 0;
+    static const int PayloadSize = 256 * 1024; // 64 KB
 
+    qint64 TotalBytes = 0;
     qint64 bytesWritten = 0;
     QByteArray buffer;
     QAtomicInt atomicFlag = 0;
+
+    QDataStream *tcpStream;
 
     void closeConnection();
     void closingThread();

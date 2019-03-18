@@ -39,7 +39,7 @@ void SenderWorker::sendMetaData(){
         qDebug() << "SenderWorker: " << "Error opening File";
     }
 
-    qint64 TotalBytes = file->size();
+    TotalBytes = file->size();
 
     qDebug() << "---------------File Size: " << TotalBytes;
 
@@ -89,8 +89,28 @@ void SenderWorker::checkResponse(){
 
 ///called by signal readyRead
 void SenderWorker::sendFile(){
+
+
     qDebug() << "SenderWorker: start sending file";
-    QMetaObject::invokeMethod(this, "sendingStep", Qt::QueuedConnection);
+    emit dm->setLabelProgBarWindow(id, "Sending \"" + fileName + "\" to " + nameSendingTo);
+
+    tcpStream = new QDataStream(tcpSocket);
+
+    filePartition = file->read(FILE_PARTITION_SIZE);
+    qDebug() << "File partition size: " << filePartition.size();
+    QMetaObject::invokeMethod(this, "sendingStep", Qt::DirectConnection);
+
+    if(TotalBytes == bytesWritten){
+
+        if(file->isOpen()){
+            file->close();
+        }
+
+        qDebug() << "SenderWorker: file sendend!";
+    }
+
+
+
     /*
     // Read part of file and fill first 64KB TCP packet
     qint64 bytesWritten = 0;
@@ -131,6 +151,116 @@ void SenderWorker::sendFile(){
 }
 
 void SenderWorker::sendingStep(){
+
+    if(atomicFlag == 1){
+        // For interruptions
+        return;
+    }
+
+    if(bytesWritten == TotalBytes){
+        // File sended
+        emit dm->setLabelProgBarWindow(id, "\"" + fileName + "\" sended!");
+        if(file->isOpen()){
+            file->close();
+        }
+        return;
+    }
+
+    if(offsetPartition >= filePartition.size()){
+        // File partition sended
+        filePartition = file->read(FILE_PARTITION_SIZE);
+        offsetPartition = 0;
+    }
+
+    // Read part of file and fill first 64KB TCP packet
+    if(offsetPartition < filePartition.size()){
+        buffer.clear();
+        // If the number of bytes waiting to be written is > 4*PayloadSize
+        //      then don't write anything, and wait untill this number decreases
+        //      to start writing again
+
+
+        buffer = filePartition.mid(offsetPartition, PAYLOAD_SIZE);
+
+        *tcpStream << buffer;
+
+        if(!tcpSocket->waitForBytesWritten(5000)){
+            qDebug() << "ERROR";
+        }
+
+        bytesWritten += buffer.size();
+
+        // Update progress bar
+        emit dm->setProgBarValue_SENDER(id, bytesWritten);
+
+        offsetPartition += PAYLOAD_SIZE;
+        QMetaObject::invokeMethod(this, "sendingStep", Qt::QueuedConnection);
+
+    }
+
+    //qDebug() << "--------------BytesWritten: " << bytesWritten ;
+
+    // At this point file is sended, and thread should close.
+    // In order to do this emit signal 'closeThread'
+    // before closing wait for Ack from receiver
+
+    //closingThread();
+
+}
+
+
+/*void SenderWorker::sendingStep(){
+
+    if(atomicFlag == 1){
+        return;
+    }
+
+    if(bytesWritten == TotalBytes){
+        return;
+    }
+
+    if(offsetPartition >= filePartition.size()){
+        filePartition = file->read(FILE_PARTITION_SIZE);
+        offsetPartition = 0;
+    }
+
+    // Read part of file and fill first 64KB TCP packet
+    if(offsetPartition < filePartition.size()){
+        buffer.clear();
+        // If the number of bytes waiting to be written is > 4*PayloadSize
+        //      then don't write anything, and wait untill this number decreases
+        //      to start writing again
+        if(tcpSocket->bytesToWrite() <= 10*PayloadSize){
+
+            buffer = filePartition.mid(offsetPartition, PAYLOAD_SIZE);
+
+            if((bytesWritten += tcpSocket->write(buffer)) < buffer.size()){
+                qDebug("Transmission error in sending file");
+            }
+            if(!tcpSocket->waitForBytesWritten(5000)){
+                qDebug() << "ERROR";
+            }
+        }
+        // Update progress bar
+        emit dm->setProgBarValue_SENDER(id, bytesWritten);
+
+        offsetPartition += PAYLOAD_SIZE;
+        QMetaObject::invokeMethod(this, "sendingStep", Qt::QueuedConnection);
+
+    }
+
+    //qDebug() << "--------------BytesWritten: " << bytesWritten ;
+
+    // At this point file is sended, and thread should close.
+    // In order to do this emit signal 'closeThread'
+    // before closing wait for Ack from receiver
+
+    //closingThread();
+
+}*/
+
+
+/*void SenderWorker::sendingStep(){
 
     if(atomicFlag == 1){
         return;
@@ -174,7 +304,7 @@ void SenderWorker::sendingStep(){
         //closingThread();
     }
 }
-
+*/
 
 void SenderWorker::onInterruptSending(QUuid id){
     // cancel button pressed
@@ -182,8 +312,8 @@ void SenderWorker::onInterruptSending(QUuid id){
         atomicFlag = 1;
         if(file->isOpen()){
             file->close();
+            emit dm->setLabelProgBarWindow(id, "Transfer to " + nameSendingTo + " was canceled by user");
         }
-        dm->setLabelProgBarWindow(id, "Transfer to " + nameSendingTo + " was canceled by user");
 
         closeConnection();
 
@@ -197,9 +327,10 @@ void SenderWorker::on_disconnected(){
     //close window 
     if(file->isOpen()){
         file->close();
+        emit dm->setLabelProgBarWindow(id, nameSendingTo + " interrupted transfer, or connection lost");
     }
 
-    dm->setLabelProgBarWindow(id, nameSendingTo + " interrupted transfer, or connection lost");
+    atomicFlag = 1;
 
     //close thread
     closingThread();

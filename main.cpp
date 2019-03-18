@@ -14,7 +14,8 @@ int main(int argc, char *argv[])
 
     QApplication a(argc, argv);
 
-    QString fileName("C:/Users/Benjamin/Desktop/Poli/Prog_SISTEMA/PROGETTO/PDS_fileExchanger/Icon_IMG/I Feel Good.mp3");
+    //QString fileName("C:/Users/Benjamin/Desktop/Poli/Prog_SISTEMA/PROGETTO/PDS_fileExchanger/Icon_IMG/I Feel Good.mp3");
+    QString fileName("C:/Users/Benjamin/Desktop/Poli/Prog_SISTEMA/PROGETTO/testFolder.rar");
     //QString fileName("C:/Users/nunxy/UNIVERSITA'/Magistrale/Programmazione Di Sistema/Progetto/code/PDS_fileExchanger/Icon_IMG/avatar_2.png");
     //QString fileName(":Icon_IMG/avatar_2.png");
 
@@ -49,6 +50,7 @@ int main(int argc, char *argv[])
     QApplication::setQuitOnLastWindowClosed(false);
 
     //w.show();
+    w.hide();
 
     return a.exec();
 }

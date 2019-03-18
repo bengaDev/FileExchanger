@@ -48,6 +48,8 @@ private:
 
     QAtomicInt atomicFlag = 0;
 
+    QDataStream *in;
+
     QString getCorrectFileName(QString completePath);
 };
 

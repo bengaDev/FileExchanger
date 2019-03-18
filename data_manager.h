@@ -4,12 +4,16 @@
 #define SERVER_PORT 2015
 #define BROADCAST_PORT 2016
 #define BOOT_TOOL_PORT 2017
+#define PAYLOAD_SIZE 1024
+#define FILE_PARTITION_SIZE 500*1024*1024
 //#define SERVER_PORT3 2017
 
 #include <list>
 #include <host.h>
 #include <QMutex>
 #include <QFile>
+
+
 
 
 class Data_Manager : public QObject
