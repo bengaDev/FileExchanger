@@ -3,6 +3,7 @@
 #include <QFileInfo>
 #include <QApplication>
 #include <QMessageBox>
+#include <QProcess>
 #include "JlCompress.h"
 #include <QDebug>
 #include <QByteArray>
@@ -62,12 +63,21 @@ void sendPath(QString path, QString isDir){
 
     }
 
-    udpSocketResponse.bind(QHostAddress::LocalHost, 2018);
+    QString process = "PDS_fileExchanger.exe";
+    QProcess taskList;
+    //taskList.start("tasklist", list);
+    taskList.start(
+            "tasklist",
+            QStringList() << "/NH"
+                          << "/FO" << "CSV"
+                          << "/FI" << QString("IMAGENAME eq %1").arg(process));
 
-    //wait for a response..
-    udpSocketResponse.waitForReadyRead(3000);
+    taskList.waitForStarted(2000);
+    taskList.waitForFinished(2000);
 
-    if(!udpSocketResponse.hasPendingDatagrams()){
+    QByteArray output = taskList.readAllStandardOutput();
+
+    if(!output.startsWith("\"PDS_fileExchanger.exe\"")){
         QMessageBox::warning(nullptr, "Error: File Exchanger application not started!", "Please run \"FileExchanger.exe\" to send file");
     }
 

@@ -112,7 +112,6 @@ void Server::readBootToolDatagram(){ // main thread
     QByteArray datagram;
     QString datagramString;
     QStringList datagramTokens;
-    QUdpSocket udpSocketResponse;
 
     qDebug() << "Server: received BootToolDatagram!";
 
@@ -123,8 +122,6 @@ void Server::readBootToolDatagram(){ // main thread
         datagramString = QString(datagram);
 
         if(datagram.startsWith("BootTool isDir")){
-
-            udpSocketResponse.writeDatagram("ACK!", QHostAddress::LocalHost, 2018);
 
             qDebug() << "Server: received datagram with basic info -- UDP";
             datagramTokens = datagramString.split("?");
