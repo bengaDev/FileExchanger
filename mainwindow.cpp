@@ -265,8 +265,8 @@ void MainWindow::createTrayIcon(){
 }
 
 void MainWindow::on_activateMainWindow(QString fileName){
+    ui->sendFileLabel->setText("Sending file: " + fileName);
     if(!this->isVisible()){
-        ui->sendFileLabel->setText("Sending file: " + fileName);
         this->show();
     }
 }

@@ -10,7 +10,6 @@ QT       += network
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = PDS_fileExchanger
-CONFIG += console
 TEMPLATE = app
 
 # The following define makes your compiler emit warnings if you use

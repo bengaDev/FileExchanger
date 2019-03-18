@@ -37,7 +37,7 @@ Client::Client(Data_Manager *dm, QObject *parent) :
 
     connect(dm, SIGNAL(quittingApplication()), this, SLOT(onQuittingApplication()));
 
-    connect(dm, SIGNAL(endSendingFile()), this, SLOT(on_endSendingFile()));
+    connect(dm, SIGNAL(endSendingFile(QString)), this, SLOT(on_endSendingFile(QString)));
 
     QtConcurrent::run(this, &Client::hello);
 

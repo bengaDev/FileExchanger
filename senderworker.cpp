@@ -356,7 +356,7 @@ void SenderWorker::closeConnection(){
 
 void SenderWorker::closingThread(){
     tcpSocket->close();
-    emit dm->endSendingFile(filePath); //??
+    emit dm->endSendingFile(filePath); // For deleting zip file of directory
     emit closeThread();
 }
 
