@@ -241,7 +241,7 @@ void ReceiverWorker::receivingStep(){
         fileBuffer.clear();
 
         // Wait untill incoming data amounts to >= 'PayloadSize' Bytes
-        while(tcpSocket->bytesAvailable() < PAYLOAD_SIZE && (tcpSocket->bytesAvailable() + receivedBytes) != (fileSize + 4)){
+        while(tcpSocket->bytesAvailable() < PAYLOAD_SIZE && (tcpSocket->bytesAvailable() + receivedBytes) != fileSize){
             // If waiting for more than 5 seconds, exit the inner 'while'
             // and check if this waiting is due to end of transmission (receivedBytes>fileSize)
             // or if it's just because of poor connection, in which case the program will
@@ -276,7 +276,10 @@ void ReceiverWorker::receivingStep(){
             qDebug() << "Receiver Worker: ERROR -> ACK not sended!";
         }
 
-        emit closeThread();
+
+        emit dm->setLabelProgBarWindow(uniqueID, "\"" + fileName + "\" received!");
+
+        closingThread();
     }
 
 }

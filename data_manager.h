@@ -84,7 +84,7 @@ public slots:
 private:
     QString filePath = nullptr;
     QString fileName = nullptr;
-    bool isDir;
+    bool isDir = false;
     std::list<Host> onlineUsers;
     std::list<Host> toSend;
     std::list<Host> queueNextOnlineUsers;

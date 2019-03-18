@@ -220,6 +220,9 @@ void SenderWorker::sendingStep(){
     }
 
     if(bytesWritten == TotalBytes){
+        if(file->isOpen()){
+            file->close();
+        }
         return;
     }
 
