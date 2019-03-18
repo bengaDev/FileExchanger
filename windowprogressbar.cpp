@@ -155,6 +155,11 @@ void WindowProgressBar::onSetLabel(QUuid id, QString stringLabel){
             cancelBtn->setEnabled(false);
         }
 
+        if(stringLabel.endsWith("canceled by user") || stringLabel.endsWith("connection lost")){
+            QPushButton* cancelBtn = container->findChild<QPushButton*>();
+            cancelBtn->setEnabled(false);
+        }
+
 
         label->setText(stringLabel);
     }

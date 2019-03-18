@@ -17,15 +17,10 @@ int main(int argc, char *argv[])
     //QString fileName("C:/Users/Benjamin/Desktop/Poli/Prog_SISTEMA/PROGETTO/PDS_fileExchanger/Icon_IMG/I Feel Good.mp3");
     //QString fileName("C:/Users/Benjamin/Desktop/Poli/Prog_SISTEMA/PROGETTO/testFolder.rar");
     //QString fileName("C:/Users/nunxy/UNIVERSITA'/Magistrale/Programmazione Di Sistema/Progetto/code/PDS_fileExchanger/Icon_IMG/avatar_2.png");
-    QString fileName("C:/Users/nunxy/Downloads/progetto2017.pdf");
+    //QString fileName("C:/Users/nunxy/Downloads/progetto2017.pdf");
     //QString fileName(":Icon_IMG/avatar_2.png");
 
-    for (int i = 1; i < argc; ++i){
-        //TO BE IMPLEMENTED IN FINAL VERSION
-        //fileName = argv[i];
-    }
-
-    Data_Manager localDataManager("Nunzio", fileName);  //filename sarà null perchè non entro nel for(argc..)
+    Data_Manager localDataManager("localHost", nullptr);  //filename sarà null perchè non entro nel for(argc..)
 
     Server myServer(&localDataManager); //THIS STARTS THE SERVER
 
