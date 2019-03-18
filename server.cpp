@@ -87,7 +87,7 @@ void Server::readBroadcastDatagram(){
 
             }else if(visibility == "NOTVISIBLE" && dm->isPresentInOnlineUsers(QUuid(uniqueID)) == true){
                 dm->deleteOnlineUser(QUuid(uniqueID));
-            }else if(visibility == "VISIBLE" && dm->isPresentInOnlineUsers(QUuid(uniqueID)) == false){
+            }else if(visibility == "VISIBLE" && dm->isPresentInOnlineUsers(QUuid(uniqueID)) == false && QUuid(uniqueID) != dm->localHost->getUniqueID()){
                 // I want the rest of the data - Server responds in UDP
                 qDebug() << "Server: requesting for more info -- UDP";
                 Host h(true, name);

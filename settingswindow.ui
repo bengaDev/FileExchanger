@@ -86,7 +86,8 @@
       <item>
        <widget class="QLabel" name="defaultPathLabel">
         <property name="text">
-         <string>Default save path</string>
+         <string>Default save path
+(Downloads folder)</string>
         </property>
        </widget>
       </item>

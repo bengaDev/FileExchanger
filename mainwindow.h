@@ -50,6 +50,8 @@ private slots:
 
     void on_actionChange_Settings_triggered();
 
+    void on_fileOpenError();
+
 private:
     Ui::MainWindow *ui;
     void createTrayIcon();

@@ -3,7 +3,7 @@
 SenderWorker::SenderWorker(Data_Manager* dm,QUuid id, QHostAddress addr, QString nameSendingTo)
 {
     this->dm = dm;
-    this->id = id;
+    this->uniqueID = id;
     this->nameSendingTo = nameSendingTo;
     this->filePath = dm->getFilePath();
     this->fileName = dm->getFileName();
@@ -22,6 +22,7 @@ SenderWorker::SenderWorker(Data_Manager* dm,QUuid id, QHostAddress addr, QString
 
     //add connect to close socket
     connect(dm, SIGNAL(interruptSending(QUuid)), this, SLOT(onInterruptSending(QUuid)), Qt::QueuedConnection);
+    connect(dm, SIGNAL(interruptAllSending()), this, SLOT(onInterruptAllSending()), Qt::QueuedConnection);
 
     //connect(tcpSocket, SIGNAL(stateChanged()), this, SLOT(DEBUG_socketStateChanged()));
 
@@ -37,6 +38,8 @@ void SenderWorker::sendMetaData(){
 
     if(file->open(QIODevice::ReadOnly) == false){
         qDebug() << "SenderWorker: " << "Error opening File";
+        emit dm->fileOpenError();
+        closingThread();
     }
 
     TotalBytes = file->size();
@@ -63,7 +66,7 @@ void SenderWorker::sendMetaData(){
 
 
     // Set Max Value in corresponding ProgressBar of host 'h'
-    emit dm->setProgBarMaximum_SENDER(id, TotalBytes);
+    emit dm->setProgBarMaximum_SENDER(uniqueID, TotalBytes);
 
     ////// WAIT FOR CLIENT TO ACCEPT REQUEST!//////
     //read on tcp socket -> receive ok from client
@@ -83,7 +86,7 @@ void SenderWorker::checkResponse(){
         sendFile();
     }else if(response == "ACK"){
         qDebug() << "SenderWorker: Received ACK, closing thread";
-        emit dm->setLabelProgBarWindow(id, "\"" + fileName + "\" sended!");
+        emit dm->setLabelProgBarWindow(uniqueID, "\"" + fileName + "\" sended!");
         closingThread();
     }
 }
@@ -93,7 +96,7 @@ void SenderWorker::sendFile(){
 
 
     qDebug() << "SenderWorker: start sending file";
-    emit dm->setLabelProgBarWindow(id, "Sending \"" + fileName + "\" to " + nameSendingTo);
+    emit dm->setLabelProgBarWindow(uniqueID, "Sending \"" + fileName + "\" to " + nameSendingTo);
 
     tcpStream = new QDataStream(tcpSocket);
 
@@ -192,7 +195,7 @@ void SenderWorker::sendingStep(){
         bytesWritten += buffer.size();
 
         // Update progress bar
-        emit dm->setProgBarValue_SENDER(id, bytesWritten);
+        emit dm->setProgBarValue_SENDER(uniqueID, bytesWritten);
 
         offsetPartition += PAYLOAD_SIZE;
         QMetaObject::invokeMethod(this, "sendingStep", Qt::QueuedConnection);
@@ -307,9 +310,13 @@ void SenderWorker::sendingStep(){
 }
 */
 
+void SenderWorker::onInterruptAllSending(){
+    onInterruptSending(this->uniqueID);
+}
+
 void SenderWorker::onInterruptSending(QUuid id){
     // cancel button pressed
-    if(this->id == id){
+    if(this->uniqueID == id){
         atomicFlag = 1;
         if(file->isOpen()){
             file->close();
@@ -328,7 +335,7 @@ void SenderWorker::on_disconnected(){
     //close window 
     if(file->isOpen()){
         file->close();
-        emit dm->setLabelProgBarWindow(id, nameSendingTo + " interrupted transfer, or connection lost");
+        emit dm->setLabelProgBarWindow(uniqueID, nameSendingTo + " interrupted transfer, or connection lost");
     }
 
     atomicFlag = 1;
@@ -349,7 +356,7 @@ void SenderWorker::closeConnection(){
 
 void SenderWorker::closingThread(){
     tcpSocket->close();
-    emit dm->endSendingFile(filePath);
+    emit dm->endSendingFile(filePath); //??
     emit closeThread();
 }
 

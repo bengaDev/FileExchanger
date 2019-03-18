@@ -68,6 +68,10 @@ signals:
     //Signal for transmission interruption by user pushbutton
     void interruptSending(QUuid);
     void interruptReceiving(QUuid);
+    void interruptAllSending();
+    void interruptAllReceiving();
+
+    void fileOpenError();
 
     void sendNewFile(QString);
     void endSendingFile(QString);

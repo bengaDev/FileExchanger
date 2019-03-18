@@ -12,7 +12,7 @@ class SenderWorker : public QObject
     Q_OBJECT
 public:
     //explicit SenderWorker(Data_Manager* dm, Host h, QObject *parent = nullptr);
-    SenderWorker(Data_Manager* dm, QUuid id, QHostAddress addr, QString nameSendingTo);
+    SenderWorker(Data_Manager* dm, QUuid uniqueID, QHostAddress addr, QString nameSendingTo);
 
     void sendFile();
 
@@ -25,13 +25,14 @@ public slots:
 
     void sendingStep();
 
-    void onInterruptSending(QUuid id);
+    void onInterruptAllSending();
+    void onInterruptSending(QUuid uniqueID);
     void DEBUG_socketStateChanged();
 
     void on_disconnected();
 private:
     Data_Manager* dm;
-    QUuid id;
+    QUuid uniqueID;
     QString nameSendingTo;
     //QHostAddress addr;
     QTcpSocket* tcpSocket;

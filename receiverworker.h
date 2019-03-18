@@ -26,6 +26,7 @@ public slots:
     void dataStageSTART();
     void receivingStep();
 
+    void onInterruptAllReceiving();
     void onInterruptReceiving(QUuid);
     void on_disconnected();
     void closeConnection();

@@ -17,6 +17,7 @@ ReceiverWorker::ReceiverWorker(Data_Manager* dm, qintptr socketDescriptor)
     connect(dm, SIGNAL(closeSocket()), this, SLOT(closeConnection()), Qt::QueuedConnection);
 
     connect(dm, SIGNAL(interruptReceiving(QUuid)), this, SLOT(onInterruptReceiving(QUuid)), Qt::QueuedConnection);
+    connect(dm, SIGNAL(interruptAllReceiving()), this, SLOT(onInterruptAllReceiving()), Qt::QueuedConnection);
 
     connect(tcpSocket, SIGNAL(disconnected()), this, SLOT(on_disconnected()));
 }
@@ -192,10 +193,13 @@ void ReceiverWorker::receivingStep(){
             if(receivedBytes > fileSize - 1024){
                 qDebug() << "----------------receiverWorker receivedBytes > fileSize - 1024";
             }
-            if(!tcpSocket->waitForReadyRead(5000) ){
-                qDebug() << "----------------receiverWorker waited more than 5sec";
+            if(!tcpSocket->waitForReadyRead(10000) ){
+                qDebug() << "----------------receiverWorker waited more than 10sec";
                 qDebug() << "---------------- bytes Available " << tcpSocket->bytesAvailable();
-                break;
+
+                on_disconnected();
+
+                return;
             }
         }  //64Kb are arrived now...
 
@@ -277,6 +281,10 @@ void ReceiverWorker::receivingStep(){
     }
 
 }*/
+
+void ReceiverWorker::onInterruptAllReceiving(){
+    onInterruptReceiving(this->uniqueID);
+}
 
 void ReceiverWorker::onInterruptReceiving(QUuid id){
     qDebug() << "SenderWorker: onInterruptReceived-> " + id.toString();

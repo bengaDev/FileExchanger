@@ -10,8 +10,6 @@
  *
 */
 
-static const int PayloadSize = 1 * 1024; // 64 KB
-
 Client::Client(Data_Manager *dm, QObject *parent) :
     QObject (parent)
 {
@@ -350,7 +348,7 @@ void Client::onQuittingApplication(){
     qDebug() << "=======================================================\n";
     qDebug() << "Client: Sendig last message -- UDP";
 
-    if(udpSocket.writeDatagram(datagram, QHostAddress("192.168.1.255"), SERVER_PORT) == -1){
+    if(udpSocket.writeDatagram(datagram, broadcastAddress, SERVER_PORT) == -1){
 
         qDebug() << "Client: Could not send last message -- UDP";
     } else {

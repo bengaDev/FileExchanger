@@ -2,6 +2,7 @@
 #define SETTINGSWINDOW_H
 
 #include <QDialog>
+#include <QStandardPaths>
 #include "data_manager.h"
 
 namespace Ui {

@@ -54,8 +54,8 @@ MainWindow::MainWindow(QWidget *parent, Data_Manager* dM) :
 
     // Connect for Main Window activation
     connect(dataManager, SIGNAL(activateMainWindow(QString)), this, SLOT(on_activateMainWindow(QString)));
-    ///dataManager->addOnlineUser(h1);
-    ///dataManager->deleteOnlineUser(h1);
+
+    connect(dataManager, SIGNAL(fileOpenError()), this, SLOT(on_fileOpenError()), Qt::QueuedConnection);
 
 }
 
@@ -98,6 +98,11 @@ void MainWindow::messageBoxYES_NO(qint64 fileSize, QString fileName, QUuid id, Q
 }
 
 void MainWindow::onShareButton(){
+
+    if(dataManager->getFilePath() == nullptr){
+        QMessageBox::warning(this, "Error: File not selected!", "Please select a file before sharing.");
+        return;
+    }
 
     std::list<Host> toSendUsers = dataManager->getToSendUsers();
 
@@ -279,6 +284,10 @@ void MainWindow::on_actionChange_Settings_triggered()
     settingsWindow = new SettingsWindow(this, dataManager);
     settingsWindow->setWindowTitle("Settings");
     settingsWindow->show();
+}
+
+void MainWindow::on_fileOpenError(){
+    QMessageBox::critical(this, "File Error", "Error in opening the selected file.\nFile may not exist or be corrupted!");
 }
 
 MainWindow::~MainWindow()

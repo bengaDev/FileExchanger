@@ -17,6 +17,7 @@ SettingsWindow::SettingsWindow(QWidget *parent, Data_Manager *dm) :
     ui->lineEdit_UserName->setText(userName);
     ui->automFileReceiveCheckBox->setCheckState( (receivesFileAutom == true) ? Qt::Checked : Qt::Unchecked );
     ui->defaultSavePathCheckBox->setCheckState( (isDefaultPath == true) ? Qt::Checked : Qt::Unchecked );
+    ui->defaultPathLabel->setText("Default save path\n( " + QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) + " )");
 }
 
 SettingsWindow::~SettingsWindow()

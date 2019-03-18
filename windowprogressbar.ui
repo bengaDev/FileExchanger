@@ -34,7 +34,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QLabel" name="label">
+       <widget class="QLabel" name="label_list">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
           <horstretch>0</horstretch>
@@ -56,8 +56,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>564</width>
-           <height>152</height>
+           <width>572</width>
+           <height>165</height>
           </rect>
          </property>
         </widget>

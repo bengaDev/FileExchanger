@@ -24,6 +24,8 @@ void WindowProgressBar::addProgressBars_SendTo(std::list<Host> toSendUsers){
     connect(dm, SIGNAL(setProgBarMaximum_SENDER(QUuid, qint64)), this, SLOT(onSetMaximumProgBar(QUuid, qint64)), Qt::QueuedConnection);
     connect(dm, SIGNAL(setProgBarValue_SENDER(QUuid, qint64)), this, SLOT(onSetValueProgBar(QUuid, qint64)), Qt::QueuedConnection);
 
+    ui->label_list->setText("Sending to:");
+
     for(std::list<Host>::iterator host = toSendUsers.begin(); host != toSendUsers.end(); host++){
 
         QHBoxLayout *hLayout = new QHBoxLayout();
@@ -72,6 +74,7 @@ void WindowProgressBar::addProgessBars_ReceivingFrom(QUuid id, QString name){
     QHBoxLayout *hLayout = new QHBoxLayout();
     QVBoxLayout *internalVLayout = new QVBoxLayout();
 
+    ui->label_list->setText("Receiving from:");
 
     QWidget *container = new QWidget(this);
     container->setLayout(hLayout);
@@ -142,15 +145,28 @@ void WindowProgressBar::onSetValueProgBar(QUuid id, qint64 val){
 }
 
 void WindowProgressBar::onSetLabel(QUuid id, QString stringLabel){
+
     if(progressBarMap.find(id) != progressBarMap.end()){
         QWidget* container = progressBarMap.find(id).value();
         QLabel* label = container->findChild<QLabel*>();
+
+        if(stringLabel.endsWith("received!") || stringLabel.endsWith("sended!")){
+            QPushButton* cancelBtn = container->findChild<QPushButton*>();
+            cancelBtn->setEnabled(false);
+        }
+
 
         label->setText(stringLabel);
     }
 }
 
 void WindowProgressBar::closeEvent(QCloseEvent *e){
+    if(ui->label_list->text().startsWith("Receiving")){
+        emit dm->interruptAllReceiving();
+    }else{
+        emit dm->interruptAllSending();
+    }
+
     this->close();
     this->disconnect();
 }
