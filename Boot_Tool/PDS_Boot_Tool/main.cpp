@@ -1,6 +1,8 @@
 #include <QCoreApplication>
 #include <QUdpSocket>
 #include <QFileInfo>
+#include <QApplication>
+#include <QMessageBox>
 #include "JlCompress.h"
 #include <QDebug>
 #include <QByteArray>
@@ -9,7 +11,7 @@ void sendPath(QString path, QString isDir);
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication a(argc, argv);
+    QApplication a(argc, argv);
 
     QString path;// = "C:/Users/nunxy/QT_ContextMenuAPP/contextMenuApp";
     QString appPath = QCoreApplication::applicationDirPath();
@@ -43,11 +45,13 @@ int main(int argc, char *argv[])
     }
 
 
-    return 0;// a.exec();
+    return 0;
 }
 
 void sendPath(QString path, QString isDir){
     QUdpSocket udpSocket;
+    QUdpSocket udpSocketResponse;
+
     QByteArray datagram = "BootTool isDir?" + isDir.toUtf8() + "?" + path.toUtf8();
 
     if(udpSocket.writeDatagram(datagram, QHostAddress::LocalHost, 2017) == -1){
@@ -57,5 +61,16 @@ void sendPath(QString path, QString isDir){
         qDebug() << "Boot Tool: path sended -- UDP";
 
     }
+
+    udpSocketResponse.bind(QHostAddress::LocalHost, 2018);
+
+    //wait for a response..
+    udpSocketResponse.waitForReadyRead(3000);
+
+    if(!udpSocketResponse.hasPendingDatagrams()){
+        QMessageBox::warning(nullptr, "Error: File Exchanger application not started!", "Please run \"FileExchanger.exe\" to send file");
+    }
+
+    return;
 
 }
