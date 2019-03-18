@@ -83,6 +83,7 @@ void SenderWorker::checkResponse(){
         sendFile();
     }else if(response == "ACK"){
         qDebug() << "SenderWorker: Received ACK, closing thread";
+        emit dm->setLabelProgBarWindow(id, "\"" + fileName + "\" sended!");
         closingThread();
     }
 }
@@ -159,7 +160,7 @@ void SenderWorker::sendingStep(){
 
     if(bytesWritten == TotalBytes){
         // File sended
-        emit dm->setLabelProgBarWindow(id, "\"" + fileName + "\" sended!");
+
         if(file->isOpen()){
             file->close();
         }

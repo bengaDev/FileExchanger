@@ -304,7 +304,7 @@ void Client::sendingFile(QTcpSocket* tcpSocket, QFile* file, Host h){
 
 QHostAddress Client::findBroadcastAddress(){
     QHostAddress localHostAddress;
-    QHostAddress broadcast = QHostAddress("0.0.0.0");
+    QHostAddress broadcast = QHostAddress::Broadcast;
     QTcpSocket socket;
 
     socket.connectToHost("8.8.8.8", 53); // google DNS, or something else reliable
